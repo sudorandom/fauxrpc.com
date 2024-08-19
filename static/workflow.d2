@@ -1,0 +1,10 @@
+# d2 static/workflow.d2 --sketch --theme 201 static/workflow.svg
+
+frontend.fauxrpc
+frontend.frontend-dev.shape: person
+frontend.frontend-dev <-> frontend.fauxrpc
+
+backend.backend-dev.shape: person
+protobufs -> frontend.fauxrpc
+backend.backend-dev <-> backend.backend-system
+protobufs -> backend.backend-system
