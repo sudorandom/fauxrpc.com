@@ -18,7 +18,7 @@ module:
 menu:
   main:
     - name: Documentation
-      pageRef: /docs/getting-started
+      pageRef: /docs/intro/
       weight: 1
     - name: Blog
       url: http://kmcd.dev
@@ -32,3 +32,23 @@ menu:
       url: "https://github.com/sudorandom/fauxrpc"
       params:
         icon: github
+
+params:
+  description: Fake gRPC, gRPC-Web, Connect, and REST services powered by protobuf
+
+  footer:
+    enable: true
+    displayCopyright: true
+    displayPoweredBy: false
+    width: normal
+
+  navbar:
+    displayTitle: true
+    displayLogo: true
+    logo:
+      path: logo-transparent-small.png
+      dark: logo-transparent-small.png
+      # width: 40
+      # height: 20
+      # link: /
+    width: wide

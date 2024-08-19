@@ -15,30 +15,40 @@ FauxRPC is a powerful tool that empowers you to accelerate development and testi
 {{< hextra/feature-grid >}}
   {{< hextra/feature-card
     title="Faster Development & Testing"
+    link="docs/intro/"
     subtitle="Work independently without relying on fully functional backend services."
+    icon="fast-forward"
   >}}
   {{< hextra/feature-card
     title="Isolation & Control"
+    link="docs/workflow/"
     subtitle="Test frontend components in isolation with controlled fake data."
+    icon="cog"
   >}}
   {{< hextra/feature-card
     title="Multi-Protocol Support"
+    link="/docs/multi-protocol-support/"
     subtitle="Supports multiple protocols: gRPC, gRPC-Web, Connect, and REST."
+    icon="globe-alt"
   >}}
   {{< hextra/feature-card
     title="Prototyping & Demos"
+    link="docs/workflow/"
     subtitle="Create prototypes and demos quickly without building the full backend. Fake it till you make it."
+    icon="device-mobile"
   >}}
   {{< hextra/feature-card
     title="Improved Collaboration"
+    link="docs/workflow/"
     subtitle="Bridge the gap between frontend and backend teams."
+    icon="users"
   >}}
   {{< hextra/feature-card
     title="Plays well with others"
-    link="/docs/protovalidate"
+    link="/docs/protovalidate/"
     subtitle="Test data from FauxRPC will try to automatically follow any **protovalidate** constraints that are defined."
     icon="sparkles"
   >}}
 {{< /hextra/feature-grid >}}
 
-{{< hextra/hero-button text="Get Started" link="docs/getting-started" >}}
+{{< hextra/hero-button text="Get Started" link="docs/intro/" >}}

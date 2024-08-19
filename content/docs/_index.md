@@ -1,5 +1,5 @@
 ---
-linkTitle: "Documentation"
+
 ---
 
-This is documentation!
+This is the documentation section! Click on a section on the left to read more.
