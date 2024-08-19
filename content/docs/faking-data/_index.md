@@ -37,4 +37,4 @@ This is fine, but for this RPC, we know a bit more about the type being returned
 
 ### With protovalidate
 
-You can create more realistic fake data just by implementing protovalidate rules. See more on this topic [here](/dosc/faking-data/protovalidate/).
+You can create more realistic fake data just by implementing protovalidate rules. See more on this topic [here](/docs/faking-data/protovalidate/).
