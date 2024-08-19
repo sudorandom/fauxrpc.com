@@ -17,16 +17,16 @@ module:
 
 menu:
   main:
-    # - name: Documentation
-    #   pageRef: /docs/intro/
-    #   weight: 1
-    # - name: Blog
-    #   url: http://kmcd.dev
-    #   weight: 2
-    # - name: Search
-    #   weight: 4
-    #   params:
-    #     type: search
+    - name: Documentation
+      pageRef: /docs/intro/
+      weight: 1
+    - name: Blog
+      url: http://kmcd.dev
+      weight: 2
+    - name: Search
+      weight: 4
+      params:
+        type: search
     - name: GitHub
       weight: 5
       url: "https://github.com/sudorandom/fauxrpc"
