@@ -4,6 +4,8 @@ weight: 30
 slug: inputs
 ---
 
+FauxRPC offers versatile ways to define the services it emulates. Whether you have Protobuf descriptors, a live gRPC server, or even Buf Schema Registry images, you can seamlessly provide the necessary input for FauxRPC to generate mock responses. This flexibility empowers you to test and develop against various scenarios without relying on actual backend implementations.
+
 ## Using Descriptors
 Make an `example.proto` file (or use a file that already exists):
 ```protobuf
