@@ -45,7 +45,7 @@ FauxRPC is a powerful tool that empowers you to accelerate development and testi
   >}}
   {{< hextra/feature-card
     title="Plays well with others"
-    link="/docs/protovalidate/"
+    link="/docs/faking-data/protovalidate/"
     subtitle="Test data from FauxRPC will try to automatically follow any **protovalidate** constraints that are defined."
     icon="sparkles"
   >}}

@@ -1,10 +1,40 @@
 ---
 title: 'Protovalidate'
-weight: 60
 slug: protovalidate
 ---
 
 FauxRPC uses [protovalidate](https://github.com/bufbuild/protovalidate) annotations to generate better fake data. The best way to understand is by showing.
+
+
+Now let's see what this looks like with protovalidate constraints:
+```protobuf
+syntax = "proto3";
+
+import "buf/validate/validate.proto";
+
+package greet.v1;
+
+message GreetRequest {
+  string name = 1 [(buf.validate.field).string = {min_len: 3, max_len: 100}];
+}
+
+message GreetResponse {
+  string greeting = 1 [(buf.validate.field).string.pattern = "^Hello, [a-zA-Z]+$"];
+}
+
+service GreetService {
+  rpc Greet(GreetRequest) returns (GreetResponse) {}
+}
+```
+
+With this new protobuf file, this is what FauxRPC might output now:
+
+```json
+{
+  "greeting": "Hello, TWXxF"
+}
+```
+This shows how protovalidate constraints enable FauxRPC to generate more realistic and contextually relevant fake data, aligning it closer to the expected behavior of your actual services.
 
 Below is a `buf.registry.owner.v1.User` message defined in protobuf. This example comes from [the protobuf registry service](https://buf.build/bufbuild/registry/docs/main:buf.registry.owner.v1#buf.registry.owner.v1.User) for buf.build. Notice that the id field has protovalidate annotation saying that it's actually expected to have a `tuuid` format. TUUIDs are UUIDs but without the dashes. So a UUID of `7598a4f5-9a6a-4c68-9683-de54e21fb466` would look like `7598a4f59a6a4c689683de54e21fb466` in the TUUID format. Also, there's a name field with a minimum/maximum length and a regex pattern.
 

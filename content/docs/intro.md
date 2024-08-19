@@ -2,6 +2,8 @@
 title: 'Introduction'
 weight: 10
 slug: intro
+aliases:
+  - "/docs/"
 ---
 
 ## FauxRPC
