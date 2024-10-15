@@ -89,31 +89,39 @@ message User {
 Now let's see the output that FauxRPC will give for this type:
 
 ```shell
-$ buf build buf.build/bufbuild/registry -o bufbuild.registry.binpb
-$ fauxrpc run --schema=./bufbuild.registry.binpb
-$ buf curl --http2-prior-knowledge http://127.0.0.1:6660/buf.registry.owner.v1.UserService/ListUsers
+$ buf build buf.build/bufbuild/registry -o registry.binpb
+$ fauxrpc generate --schema=./registry.binpb --target=buf.registry.owner.v1.ListUsersResponse | jq
 {
-  "nextPageToken": "Food truck.",
+  "nextPageToken": "Microdosing.",
   "users": [
     {
-      "id": "c4468393f926400d8880a264df9c284a",
-      "createTime": "2012-03-06T12:15:03.239463070Z",
-      "updateTime": "1990-10-29T13:12:31.224347086Z",
-      "name": "jexox",
-      "type": "USER_TYPE_STANDARD",
-      "description": "Tattooed taxidermy.",
-      "url": "http://www.productexploit.name/synergies/target"
+      "id": "bc68e48242b646ca987cac9458460076",
+      "createTime": "1925-11-15T00:18:39.375868764Z",
+      "updateTime": "1907-10-26T13:51:30.881098122Z",
+      "name": "s0",
+      "type": "USER_TYPE_BOT",
+      "description": "Freegan.",
+      "url": "https://www.internationalreinvent.biz/enable"
     },
     {
-      "id": "0e4ca24f4ff54761b109daab0da1bea2",
-      "createTime": "1955-05-16T02:37:30.643378679Z",
-      "updateTime": "1923-08-28T04:28:43.330711919Z",
-      "name": "ya0",
-      "type": "USER_TYPE_STANDARD",
+      "id": "202ef6bec6c44aaab4ca3228045ed83c",
+      "createTime": "2018-05-14T11:13:41.291735818Z",
+      "updateTime": "1996-10-05T01:18:29.103348540Z",
+      "name": "ske65l",
+      "description": "Tilde.",
+      "url": "https://www.producte-tailers.info/maximize",
+      "verificationStatus": "USER_VERIFICATION_STATUS_VERIFIED"
+    },
+    {
+      "id": "c294c494487e40e8a84ad0144e28b29c",
+      "createTime": "2022-04-23T11:41:06.875834735Z",
+      "updateTime": "1986-05-11T01:39:54.254076716Z",
+      "name": "hliho",
+      "type": "USER_TYPE_BOT",
       "state": "USER_STATE_INACTIVE",
-      "description": "Helvetica.",
-      "url": "https://www.centralengage.info/markets/scale/e-commerce/exploit",
-      "verificationStatus": "USER_VERIFICATION_STATUS_UNVERIFIED"
+      "description": "Master skateboard.",
+      "url": "https://www.centralmorph.biz/transform/action-items/24-365",
+      "verificationStatus": "USER_VERIFICATION_STATUS_VERIFIED"
     }
   ]
 }

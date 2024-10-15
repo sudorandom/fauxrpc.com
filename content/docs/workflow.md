@@ -1,6 +1,6 @@
 ---
 title: 'Workflow'
-weight: 55
+weight: 15
 slug: workflow
 ---
 

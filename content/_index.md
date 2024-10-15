@@ -27,7 +27,7 @@ FauxRPC is a powerful tool that empowers you to accelerate development and testi
   >}}
   {{< hextra/feature-card
     title="Multi-Protocol Support"
-    link="/docs/multi-protocol-support/"
+    link="/docs/server/multi-protocol-support/"
     subtitle="Supports multiple protocols: gRPC, gRPC-Web, Connect, and REST."
     icon="globe-alt"
   >}}
@@ -38,10 +38,10 @@ FauxRPC is a powerful tool that empowers you to accelerate development and testi
     icon="device-mobile"
   >}}
   {{< hextra/feature-card
-    title="Improved Collaboration"
-    link="docs/workflow/"
-    subtitle="Bridge the gap between frontend and backend teams."
-    icon="users"
+    title="Testcontainers support"
+    link="docs/testcontainers/"
+    subtitle="(go only) Superpower testing Go services by using FauxRPC with Testcontainers."
+    icon="check"
   >}}
   {{< hextra/feature-card
     title="Plays well with others"

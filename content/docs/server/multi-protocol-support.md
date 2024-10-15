@@ -1,7 +1,9 @@
 ---
 title: 'Multi-protocol Support'
-weight: 40
+weight: 15
 slug: multi-protocol-support
+aliases:
+- /docs/multi-protocol-support/
 ---
 
 ## gRPC/gRPC-Web/Connect
