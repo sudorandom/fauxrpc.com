@@ -40,7 +40,7 @@ Let's break down each flag into a little bit more detail.
     - **Reflection URL:** A URL of a live gRPC server that supports reflection. FauxRPC will query this server to understand its services and generate fake responses accordingly.
     - **Directory:** A path to a directory containing Protobuf descriptor files.
     * You can use this flag multiple times to combine services from different sources.
-    * See the [Inputs](/docs/server/inputs) page for more on this.
+    * See the [Inputs](/docs/server/inputs/) page for more on this.
 - `-a, --addr`: Sets the address and port for the server to listen on. Default is `127.0.0.1:6660`.
 - `--no-reflection`: Disables the server reflection service. This is useful if you don't want clients to be able to introspect the server's API.
 - `--no-doc-page`: Disables the documentation page served by FauxRPC.

@@ -34,7 +34,7 @@ Flags:
     - **Reflection URL:** A URL of a live gRPC server that supports reflection. FauxRPC will query this server to understand its services and generate fake responses accordingly.
     - **Directory:** A path to a directory containing Protobuf descriptor files.
     * You can use this flag multiple times to combine services from different sources.
-    * See the [Inputs](/docs/server/inputs) page for more on this.
+    * See the [Inputs](/docs/server/inputs/) page for more on this.
 - `--target`: **Required.** Defines the fully qualified Protobuf message type for which you want to generate fake data (e.g., `my.package.v1.MyMessage`).
 - `--format`: Sets the output format for the generated data. Default is `json`.
 - `--seed`: Provides a seed value for the random number generator. This ensures consistent output if you need to generate the same data multiple times.
@@ -90,4 +90,4 @@ $ fauxrpc generate --schema=registry.binpb --target=buf.registry.module.v1.Commi
 * You can control the output format and use a seed for reproducible results.
 * It's a valuable tool for testing, prototyping, and various development scenarios where you need sample data.
 
-Remember that you can [use protovalidate annotations](/docs/faking-data/protovalidate) to improve the quality of this data.
+Remember that you can [use protovalidate annotations](/docs/faking-data/protovalidate/) to improve the quality of this data.

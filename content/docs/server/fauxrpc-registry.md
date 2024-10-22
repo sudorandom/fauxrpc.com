@@ -4,7 +4,7 @@ weight: 50
 slug: fauxrpc-registry
 ---
 
-The "registry" refers to the schema that FauxRPC knows about. Since this a protobuf/gRPC focused tool "schema" comes in the from of [protobuf descriptors](https://buf.build/docs/reference/descriptors). Descriptors can come from many sources but the ways to input them are detailed further in the [inputs page](/docs/server/inputs).
+The "registry" refers to the schema that FauxRPC knows about. Since this a protobuf/gRPC focused tool "schema" comes in the from of [protobuf descriptors](https://buf.build/docs/reference/descriptors). Descriptors can come from many sources but the ways to input them are detailed further in the [inputs page](/docs/server/inputs/).
 
 ### Adding new schema
 Schema can be added using the `--schema` option whenever starting the server but you can actually change the schema in runtime as well using the `fauxrpc registry add` command.
