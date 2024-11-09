@@ -5,6 +5,7 @@ slug: protovalidate
 
 FauxRPC uses [protovalidate](https://github.com/bufbuild/protovalidate) annotations to generate better fake data. The best way to understand is by showing.
 
+## Making better fake data
 
 Now let's see what this looks like with protovalidate constraints:
 ```protobuf
@@ -19,7 +20,7 @@ message GreetRequest {
 }
 
 message GreetResponse {
-  string greeting = 1 [(buf.validate.field).string.pattern = "^Hello, [a-zA-Z]+$"];
+  string greeting = 1 [(buf.validate.field).string.example = "Hello, user!"];
 }
 
 service GreetService {
@@ -31,7 +32,7 @@ With this new protobuf file, this is what FauxRPC might output now:
 
 ```json
 {
-  "greeting": "Hello, TWXxF"
+  "greeting": "Hello, user!"
 }
 ```
 This shows how protovalidate constraints enable FauxRPC to generate more realistic and contextually relevant fake data, aligning it closer to the expected behavior of your actual services.
@@ -127,3 +128,60 @@ $ fauxrpc generate --schema=./registry.binpb --target=buf.registry.owner.v1.List
 }
 ```
 Hopefully, this gives you a good idea of what the output might look like. The better your validation rules, the better the FauxRPC data will be.
+
+## Validation Rules
+When running the FauxRPC server, these protovalidate constraints will actually be enforced (starting in [v0.1.2](https://github.com/sudorandom/fauxrpc/releases/tag/v0.1.2)). Let's see what that looks like!
+
+Taking the `greet.v1.GreetService` from above, there's a little bit more work we have to do because running FauxRPC. This is because we used protovalidate, which is a dependency. Usually dependencies are hard to deal with in protobuf because the default protobuf tooling just doesn't handle it. However, the Buf CLI can help us here. Create a new `buf.yaml` file in the same directory as `greet.proto` with the contents:
+
+```yaml
+version: v2
+deps:
+  - buf.build/bufbuild/protovalidate
+```
+
+Now we're just a few commands away from having a mock service running:
+
+```shell
+# Get Buf CLI to pull our new dependency
+$ buf dep update
+# Build our protobuf (and dependencies) into a protobuf "image"
+$ buf build . -o greet.binpb
+# Start FauxRPC with this image
+$ fauxrpc run --schema=greet.binpb
+```
+
+Now let's try some requests against this service that we just created:
+```shell
+$ buf curl --http2-prior-knowledge -d '{}' http://127.0.0.1:6660/greet.v1.GreetService/Greet
+{
+   "code": "invalid_argument",
+   "message": "validation error:\n - name: value length must be at least 3 characters [string.min_len]",
+   "details": [
+      {
+         "type": "buf.validate.Violations",
+         "value": "CkIKBG5hbWUSDnN0cmluZy5taW5fbGVuGip2YWx1ZSBsZW5ndGggbXVzdCBiZSBhdCBsZWFzdCAzIGNoYXJhY3RlcnM",
+         "debug": {
+            "violations": [
+               {
+                  "fieldPath": "name",
+                  "constraintId": "string.min_len",
+                  "message": "value length must be at least 3 characters"
+               }
+            ]
+         }
+      }
+   ]
+}
+```
+
+Wow! This error tells us the exact issue with our request. The `name` field needs to be at least 3 characters now. Our empty object `{}` isn't good enough. We need a name and it needs to have between 3 and 20 characters. Let's try once more:
+
+```shell
+$ buf curl --http2-prior-knowledge -d '{"name": "Bob"}' http://127.0.0.1:6660/greet.v1.GreetService/Greet
+{
+  "greeting": "Hello, user!"
+}
+```
+
+So while you are developing a frontend or some other kind of integration using a FauxRPC implementation, you will get real, high quality input validation feedback, so long as you use protovalidate.
