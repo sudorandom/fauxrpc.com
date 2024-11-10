@@ -90,4 +90,4 @@ $ fauxrpc generate --schema=registry.binpb --target=buf.registry.module.v1.Commi
 * You can control the output format and use a seed for reproducible results.
 * It's a valuable tool for testing, prototyping, and various development scenarios where you need sample data.
 
-Remember that you can [use protovalidate annotations](/docs/faking-data/protovalidate/) to improve the quality of this data.
+Remember that you can [use protovalidate annotations](/docs/protovalidate/) to improve the quality of this data.

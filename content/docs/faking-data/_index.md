@@ -35,4 +35,4 @@ With FauxRPC, you will get any kind of word, so it might look like this:
 This is fine, but for this RPC, we know a bit more about the type being returned. We know that it sends a greeting back that looks like "Hello, [name]". So here's what the same protobuf file might look like with protovalidate constraints:
 
 ### With protovalidate
-You can create more realistic fake data just by implementing protovalidate rules. See more on this topic [here](/docs/faking-data/protovalidate/).
+You can create more realistic fake data just by implementing protovalidate rules. See more on this topic [here](/docs/protovalidate/).

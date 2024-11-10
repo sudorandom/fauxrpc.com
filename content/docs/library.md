@@ -1,5 +1,5 @@
 ---
-title: 'Library'
+title: 'Go Library'
 weight: 60
 slug: library
 ---

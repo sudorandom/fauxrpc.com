@@ -1,6 +1,7 @@
 ---
 title: 'Protovalidate'
 slug: protovalidate
+weight: 55
 ---
 
 FauxRPC uses [protovalidate](https://github.com/bufbuild/protovalidate) annotations to generate better fake data. The best way to understand is by showing.

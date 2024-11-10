@@ -7,7 +7,7 @@ slug: fauxrpc-stub
 FauxRPC's stubs allow you to specify what a response should look like. This is super useful for testing and setting up specific situations to happen during tests.
 
 ## Defining Stubs
-Now, FauxRPC's default behavior is fun. It will generate [fake data](/docs/faking-data/) that probably looks a little silly. The data looks less silly if you [leverage protovalidate](/docs/faking-data/protovalidate/) to set constraints and examples. FauxRPC will automatically use those annotation to give more realistic data. This can be pretty decent, but there are many cases where this isn't good enough. You often times want to specify an exact response. Now you can do this with the `fauxrpc stubs` commands.
+Now, FauxRPC's default behavior is fun. It will generate [fake data](/docs/faking-data/) that probably looks a little silly. The data looks less silly if you [leverage protovalidate](/docs/protovalidate/) to set constraints and examples. FauxRPC will automatically use those annotation to give more realistic data. This can be pretty decent, but there are many cases where this isn't good enough. You often times want to specify an exact response. Now you can do this with the `fauxrpc stubs` commands.
 
 ### Adding a stub
 ```shell
