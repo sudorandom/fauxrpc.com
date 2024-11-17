@@ -1,0 +1,22 @@
+syntax = "proto3";
+package examples.rest;
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+service UserService {
+  rpc GetUser(UserID) returns (User) {
+    option (google.api.http).get = "/user/{user_id}";
+    option idempotency_level = NO_SIDE_EFFECTS;
+  }
+}
+
+message UserID {
+  int64 user_id = 1;
+}
+
+message User {
+  int64 id = 1;
+  string name = 3;
+  string status = 6;
+}
