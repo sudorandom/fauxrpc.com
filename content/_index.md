@@ -10,6 +10,9 @@ layout: home
 FauxRPC is a powerful tool that empowers you to accelerate development and testing by effortlessly generating fake implementations of gRPC, gRPC-Web, Connect, and REST services. If you have a protobuf-based workflow, this tool could help.
 {{< /hextra/hero-subtitle >}}
 
+{{< hextra/hero-button text="Documentation" link="docs/intro/" >}}
+{{< hextra/hero-button text="Install" link="docs/install/" >}}
+
 {{< hextra/hero-headline style="font-size:1.3em" >}}Effortlessly start a fake service{{< /hextra/hero-headline >}}
 {{< hextra/hero-container cols=1 >}}
 {{< p >}}

@@ -15,11 +15,13 @@ docker run -it --rm -p 6660:6660 docker.io/sudorandom/fauxrpc:latest run --empty
 ```
 
 ## Install via source
+This is not recommended long-term but this is sufficient for playing around with FauxRPC.
 ```
 go install github.com/sudorandom/fauxrpc/cmd/fauxrpc@latest
 ```
 
 ## Run with `go run`
+This is also not recommended long-term but this is sufficient for playing around with FauxRPC.
 ```
 go run github.com/sudorandom/fauxrpc/cmd/fauxrpc@latest
 ```
