@@ -1,0 +1,101 @@
+/* Custom styles for code blocks */
+pre {
+    padding: 1.5em; /* More padding */
+    background-color: #2d2d2d; /* Darker background */
+    border-radius: 0.375rem; /* Rounded corners */
+    overflow-x: auto; /* Enable horizontal scrolling for long lines */
+    margin-top: 1.5em; /* Margin above code block */
+    margin-bottom: 1.5em; /* Margin below code block */
+}
+
+pre code {
+    font-size: 0.95em; /* Slightly larger font size */
+    line-height: 1.5;
+    color: #f8f8f2; /* Light text color for dark background */
+}
+
+/* Custom styles for hextra containers */
+.hextra-hero-container,
+.hextra-feature-grid {
+    margin-top: 2.5em; /* Add margin above */
+    margin-bottom: 2.5em; /* Add margin below */
+}
+
+/* Limit image width within content */
+.hx-max-w-screen-xl img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Add spacing above and below hero buttons */
+.hextra-hero-button {
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+/* Emphasize "Use" tab and add a magic icon */
+/* This is a highly speculative selector without knowing the exact HTML structure */
+.hextra-tabs-container li a[title="Use"],
+.hextra-tabs-container li span[title="Use"] {
+    font-weight: bold;
+    color: #007bff; /* A distinct color */
+}
+
+.hextra-tabs-container li a[title="Use"]::before,
+.hextra-tabs-container li span[title="Use"]::before {
+    content: "✨ "; /* Magic icon emoji */
+    margin-right: 0.25em;
+}
+
+/* General typography improvements */
+h1, h2, h3, h4, h5, h6 {
+    margin-top: 1.5em; /* Space above headings */
+    margin-bottom: 0.8em; /* Space below headings */
+    line-height: 1.2; /* Tighter line height for headings */
+}
+
+p {
+    margin-bottom: 1em; /* Space between paragraphs */
+    line-height: 1.6; /* Improved readability for paragraphs */
+}
+
+ul, ol {
+    margin-bottom: 1em; /* Space below lists */
+    padding-left: 1.5em; /* Indent list items */
+}
+
+li {
+    margin-bottom: 0.5em; /* Space between list items */
+}
+
+/* Add some general vertical spacing to content sections */
+/* This targets direct children of the main content area */
+.hx-flex.hx-flex-col.hx-items-start > * {
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+/* Override specific elements if they have too much default margin */
+.hextra-hero-headline {
+    margin-top: 0.5em; /* Reduce top margin if it's too much */
+    margin-bottom: 0.5em; /* Reduce bottom margin if it's too much */
+}
+
+.hextra-hero-subtitle {
+    margin-top: 0.5em;
+    margin-bottom: 1.5em; /* More space below subtitle before buttons */
+}
+
+.my-main-content-wrapper {
+    padding-left: 4rem;
+    padding-right: 4rem;
+}
+
+/* Reduce vertical size of feature cards */
+.hextra-feature-card {
+    padding-top: 0;
+    padding-bottom: 0;
+}

@@ -106,10 +106,10 @@ And obviously, generated gRPC/gRPC-Web/Connect clients all work as expected as w
     icon="fast-forward"
   >}}
   {{< hextra/feature-card
-    title="Isolation & Control"
-    link="docs/workflow/"
-    subtitle="Test frontend components in isolation with controlled fake data."
-    icon="cog"
+    title="Interactive Dashboard"
+    link="docs/server/dashboard/"
+    subtitle="Gain real-time insights into your server's operations."
+    icon="chart-bar"
   >}}
   {{< hextra/feature-card
     title="Multi-Protocol Support"
