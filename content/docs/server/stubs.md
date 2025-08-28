@@ -1,6 +1,6 @@
 ---
 title: 'Stubs'
-weight: 10
+weight: 70
 slug: stubs
 aliases:
 - /docs/stubs/

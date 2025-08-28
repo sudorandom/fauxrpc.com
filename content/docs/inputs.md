@@ -1,15 +1,16 @@
 ---
 title: 'Inputs'
-weight: 10
+weight: 30
 slug: inputs
 aliases:
 - /docs/inputs/
+- /docs/server/inputs/
 ---
 
-FauxRPC offers versatile ways to define the services it emulates. Whether you have Protobuf descriptors, a live gRPC server, or even Buf Schema Registry images, you can seamlessly provide the necessary input for FauxRPC to generate mock responses. This flexibility empowers you to test and develop against various scenarios without relying on actual backend implementations.
+FauxRPC offers versatile ways to define the services it emulates. Whether you have Protobuf files, descriptor sets, a live gRPC server, or even Buf Schema Registry images, you can seamlessly provide the necessary input for FauxRPC to generate mock responses. This flexibility empowers you to test and develop against various scenarios without relying on actual backend implementations.
 
-## Using Descriptors
-Descriptors are a description of protobuf files... which are defined in protobuf. To see more about them [here](https://buf.build/docs/reference/descriptors). Now let's cover a practical example.
+## From Protobuf files
+If you have `.proto` source files, you can use `buf` to build a descriptor set and then use it with FauxRPC.
 
 Make an `example.proto` file (or use a file that already exists):
 ```protobuf
@@ -46,6 +47,13 @@ $ buf curl --http2-prior-knowledge http://127.0.0.1:6660/greet.v1.GreetService/G
 }
 ```
 
+## Using Descriptor Sets
+If you already have a Protobuf descriptor set file (commonly with a `.binpb` or `.json` extension), you can provide it directly to FauxRPC. For more about descriptor sets, see the [Buf documentation](https://buf.build/docs/reference/descriptors).
+
+```shell
+$ fauxrpc run --schema=./example.binpb
+```
+
 ## Using Server Reflection
 If there's an existing gRPC service running that you want to emulate, you can use server reflection to start the FauxRPC service:
 ```shell
@@ -53,11 +61,10 @@ $ fauxrpc run --schema=https://demo.connectrpc.com
 ```
 
 ## From BSR (Buf Schema Registry)
-Buf has a [schema registry](https://buf.build/product/bsr) where many schemas are hosted. Here's how to use FauxRPC using images from the registry.
+Buf has a [schema registry](https://buf.build/product/bsr) where many schemas are hosted. You can use images from the registry directly with FauxRPC.
 
 ```shell
-$ buf build buf.build/bufbuild/registry -o bufbuild.registry.json
-$ fauxrpc run --schema=./bufbuild.registry.json
+$ fauxrpc run --schema=buf.build/bufbuild/registry
 ```
 
 This will start a fake version of the BSR API by downloading descriptors for [bufbuild/registry](https://buf.build/bufbuild/registry) from the BSR and using them with FauxRPC. Very meta.
@@ -67,3 +74,5 @@ You can define this `--schema` option as many times as you want. That means you 
 ```shell
 $ fauxrpc run --schema=https://demo.connectrpc.com --schema=./example.binpb
 ```
+
+All the same inputs described above also work for [fauxrpc curl](/docs/fauxrpc-curl/).

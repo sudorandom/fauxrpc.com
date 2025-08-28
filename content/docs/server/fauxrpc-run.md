@@ -18,77 +18,129 @@ Flags:
   -l, --log-level="info"         Set the logging level (debug|info|warn|error)
       --version                  Print version information and quit
 
-      --schema=SCHEMA,...        The modules to use for the RPC schema. It can be protobuf descriptors (binpb, json,
-                                 yaml), a URL for reflection or a directory of descriptors.
+      --schema=SCHEMA,...        The modules to use for the RPC schema. It can be protobuf descriptors (binpb, json, yaml), a URL for reflection or a directory of descriptors.
   -a, --addr="127.0.0.1:6660"    Address to bind to.
       --no-reflection            Disables the server reflection service.
+      --no-http-log              Disables the HTTP log.
+      --no-validate              Disables protovalidate.
       --no-doc-page              Disables the documentation page.
+      --no-cors                  Disables CORS headers.
       --https                    Enables HTTPS, requires cert and certkey
       --cert=STRING              Path to certificate file
       --cert-key=STRING          Path to certificate key file
       --http-3                   Enables HTTP/3 support.
       --empty                    Allows the server to run with no services.
+      --only-stubs               Only use pre-defined stubs and don't make up fake data.
+      --stubs=STUBS,...          Directories or file paths for JSON files.
+      --dashboard                Enable the admin dashboard.
 ```
 
-Let's break down each flag into a little bit more detail.
+## Flags
 
-- `-h, --help`: Displays help information about the command and its flags.
-- `-l, --log-level`: Sets the logging level for the server. Options are `debug`, `info`, `warn`, and `error`. Default is `info`.
-- `--version`: Shows the version of `fauxrpc` you're using.
-- `--schema`: Specifies the source for generating the fake gRPC services. It accepts:
-    - **Protobuf descriptors:** Paths to files containing Protobuf definitions (`.binpb`, `.json`, `.yaml`). This is the most common way to define your services.
-    - **Reflection URL:** A URL of a live gRPC server that supports reflection. FauxRPC will query this server to understand its services and generate fake responses accordingly.
-    - **Directory:** A path to a directory containing Protobuf descriptor files.
-    * You can use this flag multiple times to combine services from different sources.
-    * See the [Inputs](/docs/server/inputs/) page for more on this.
-- `-a, --addr`: Sets the address and port for the server to listen on. Default is `127.0.0.1:6660`.
-- `--no-reflection`: Disables the server reflection service. This is useful if you don't want clients to be able to introspect the server's API.
-- `--no-doc-page`: Disables the documentation page served by FauxRPC.
-- `--https`: Enables HTTPS for secure communication. Requires `--cert` and `--cert-key` to be set.
-- `--cert`: Specifies the path to the TLS certificate file.
-- `--cert-key`: Specifies the path to the TLS certificate key file.
-- `--http-3`: Enables HTTP/3 support for the server.
-- `--empty`: Allows starting the server without any defined services. This can be useful for specific testing scenarios.
+Here is a comprehensive list of all the flags available for the `fauxrpc run` command.
 
-## Usage Examples
+| Flag | Default | Description |
+| :--- | :--- | :--- |
+| **Schema & Data** |
+| `--schema=...` | `(none)` | **(Required)** 📜 Specifies the source for the RPC schema. It can be a local file path, a directory, or a URL. You can use this flag multiple times. See the [Inputs](/docs/server/inputs/) page for details. |
+| `--stubs=...` | `(none)` | A path to a directory or specific JSON files containing predefined responses. Use this to serve specific, static data for certain RPC calls. |
+| `--only-stubs` | `false` | If enabled, the server will **only** respond with data from loaded stubs. RPC calls without a matching stub will return an error instead of dynamically generated fake data. |
+| `--empty` | `false` | Allows the server to start without any services loaded from a schema. Useful for starting a base server that might be configured dynamically. |
+| **Network & Security** |
+| `-a, --addr` | `127.0.0.1:6660` | The network address and port for the server to bind to (e.g., `:8080` or `0.0.0.0:9000`). |
+| `--https` | `false` | 🛡️ Enables HTTPS. Requires `--cert` and `--cert-key` to be provided. |
+| `--cert` | `(none)` | The file path to your TLS certificate. Required if `--https` is used. |
+| `--cert-key` | `(none)` | The file path to your TLS certificate key. Required if `--https` is used. |
+| `--http-3` | `false` | Enables experimental HTTP/3 support for improved performance. Requires `--https`. |
+| `--no-cors` | `false` | Disables the default Cross-Origin Resource Sharing (CORS) headers, which are permissive by default. |
+| **Features & Services** |
+| `--dashboard` | `false` | 📊 Enables a web-based admin dashboard for inspecting services, methods, and server state. |
+| `--no-reflection` | `false` | Disables the gRPC server reflection service. This prevents clients from dynamically discovering the server's API. |
+| `--no-doc-page` | `false` | Disables the built-in documentation web page that lists all available services and methods. |
+| `--no-validate` | `false` | Disables request validation using `protovalidate`. This can be useful for performance or for testing how your client handles invalid data. |
+| `--no-http-log` | `false` | Disables logging of incoming HTTP requests to the console, resulting in a quieter output. |
+| **General** |
+| `-l, --log-level` | `info` | Sets the logging verbosity. Available levels are `debug`, `info`, `warn`, and `error`. |
+| `--version` | `false` | Prints the current `fauxrpc` version information and then exits. |
+| `-h, --help` | `false` | Shows a summary of the command and its flags. |
 
-1. **Start a server using a Protobuf descriptor file:**
+## Dynamic Fakes vs. Static Stubs
+
+FauxRPC has two primary modes for generating responses:
+
+1.  **Dynamic Faking (Default):** If you only provide a `--schema`, FauxRPC will dynamically generate a valid, randomized response for any RPC call it receives. This is perfect for general-purpose testing where you just need *some* valid data.
+
+2.  **Static Stubbing:** By using the `--stubs` flag, you can provide JSON files that define specific responses for specific RPC calls. This is ideal for integration tests or frontend development where you need predictable and consistent data to verify application logic. Using `--only-stubs` ensures that *only* your predefined stubs are used.
+
+---
+
+## Practical Examples
+
+### Basic Server from a Protobuf Descriptor
+This is the most common use case. It starts a server using a binary Protobuf descriptor file (`.binpb`).
 
 ```bash
 fauxrpc run --schema=./my-service.binpb
 ```
 
-2. **Start a server using a live gRPC server for reflection:**
+### Mirroring a Live Server via Reflection
+
+Start a server that mimics a remote gRPC server by connecting to it and using its reflection API to discover services.
 
 ```bash
-fauxrpc run --schema=https://example.com:50051 
+fauxrpc run --schema=grpc.server.com:443
 ```
 
-3. **Start a server with services from both a descriptor and reflection:**
+### Combining Multiple Schema Sources
+
+You can load services from multiple sources, such as a local file and a remote server, into a single FauxRPC instance.
 
 ```bash
 fauxrpc run \
-  --schema=./my-service.binpb \
-  --schema=https://example.com:50051
+  --schema=./user-service.binpb \
+  --schema=grpc.payments.com:443
 ```
 
-4. **Start a server with a specific address and HTTPS enabled:**
+### Serving Predefined Responses from Stubs
+
+Start a server that uses your schema but serves predictable data from a directory of JSON stub files for specific RPCs.
+
+```bash
+fauxrpc run \
+  --schema=./inventory.binpb \
+  --stubs=./testdata/stubs/
+```
+
+### Enabling the Admin Dashboard
+
+Run the server and enable the web dashboard, which is great for inspecting services and seeing traffic.
+```bash
+fauxrpc run \
+  --schema=./my-service.binpb \
+  --dashboard
+```
+
+### Running a Secure Server with HTTPS
+
+To run a server on a custom port with TLS enabled, you must provide a certificate and key.
 
 ```bash
 fauxrpc run \
   --addr=:8443 \
   --https \
-  --cert=./server.crt \
-  --cert-key=./server.key \
+  --cert=./certs/server.crt \
+  --cert-key=./certs/server.key \
   --schema=./my-service.binpb
 ```
 
-5. **Start a server with debug logging:**
+### Running a Lean Server with a Custom Address
+
+This example starts a minimal server with reflection and the doc page disabled, listening on all network interfaces.
 
 ```bash
 fauxrpc run \
-  --log-level=debug \
+  --addr=0.0.0.0:9000 \
+  --no-reflection \
+  --no-doc-page \
   --schema=./my-service.binpb
 ```
-
-These examples demonstrate how to use the `fauxrpc run` command with various options to create a fake gRPC server tailored to your testing needs.
