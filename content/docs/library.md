@@ -18,19 +18,26 @@ import (
 	"fmt"
 	"log"
 
+	ownerv1 "buf.build/gen/go/bufbuild/registry/protocolbuffers/go/buf/registry/owner/v1"
 	elizav1 "buf.build/gen/go/connectrpc/eliza/protocolbuffers/go/connectrpc/eliza/v1"
+	runtimeapi "buf.build/gen/go/kubernetes/cri-api/protocolbuffers/go/pkg/apis/runtime/v1"
 	"github.com/sudorandom/fauxrpc"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
 func main() {
-    msg := &elizav1.SayResponse{}
-		fauxrpc.SetDataOnMessage(msg)
-		b, err := protojson.MarshalOptions{Indent: "  "}.Marshal(msg)
-		if err != nil {
-			log.Fatalf("err: %s", err)
-		}
-		fmt.Println(string(b))
+	msg, err := fauxrpc.NewMessage(
+		elizav1.File_connectrpc_eliza_v1_eliza_proto.Messages().ByName("SayResponse"),
+		fauxrpc.GenOptions{MaxDepth: 5},
+	)
+	if err != nil {
+		log.Fatalf("err: %s", err)
+	}
+	b, err := protojson.MarshalOptions{Indent: "  "}.Marshal(msg)
+	if err != nil {
+		log.Fatalf("err: %s", err)
+	}
+	fmt.Println(string(b))
 }
 ```
 
@@ -41,7 +48,7 @@ Example output:
 }
 ```
 
-This text will be randomly generated each time. That's nice, but Here's one that's a bit more complex.
+But what if you already have a message? There's method to set data for each of the fields of an existing message as well:
 ```go
 package main
 
@@ -50,18 +57,22 @@ import (
 	"log"
 
 	ownerv1 "buf.build/gen/go/bufbuild/registry/protocolbuffers/go/buf/registry/owner/v1"
+	elizav1 "buf.build/gen/go/connectrpc/eliza/protocolbuffers/go/connectrpc/eliza/v1"
+	runtimeapi "buf.build/gen/go/kubernetes/cri-api/protocolbuffers/go/pkg/apis/runtime/v1"
 	"github.com/sudorandom/fauxrpc"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
 func main() {
-		msg := &ownerv1.Owner{}
-		fauxrpc.SetDataOnMessage(msg)
-		b, err := protojson.MarshalOptions{Indent: "  "}.Marshal(msg)
-		if err != nil {
-			log.Fatalf("err: %s", err)
-		}
-		fmt.Println(string(b))
+	msg := &elizav1.SayResponse{}
+	if err := fauxrpc.SetDataOnMessage(msg, fauxrpc.GenOptions{}); err != nil {
+		log.Fatalf("err: %s", err)
+	}
+	b, err := protojson.MarshalOptions{Indent: "  "}.Marshal(msg)
+	if err != nil {
+		log.Fatalf("err: %s", err)
+	}
+	fmt.Println(string(b))
 }
 ```
 
@@ -81,28 +92,9 @@ Example output:
 ```
 
 ### dynamicpb
-Sometimes you don't want to have the compiled protobuf code because you want the proxy or service to be more dynamic. In that case, you typically would use [dynamicpb](https://pkg.go.dev/google.golang.org/protobuf/types/dynamicpb). FauxRPC works there, too. Here's an example:
 
-```go
-package main
+Sometimes you don't want to have the compiled protobuf code because you want the proxy or service to be more dynamic. In that case, you typically would use [dynamicpb](https://pkg.go.dev/google.golang.org/protobuf/types/dynamicpb). FauxRPC works there, too.
 
-import (
-	"fmt"
-	"log"
+### More
 
-	elizav1 "buf.build/gen/go/connectrpc/eliza/protocolbuffers/go/connectrpc/eliza/v1"
-	"github.com/sudorandom/fauxrpc"
-	"google.golang.org/protobuf/encoding/protojson"
-)
-
-func main() {
-    msg := fauxrpc.NewMessage(elizav1.File_connectrpc_eliza_v1_eliza_proto.Messages().ByName("SayResponse"))
-    b, err := protojson.MarshalOptions{Indent: "  "}.Marshal(msg)
-    if err != nil {
-        log.Fatalf("err: %s", err)
-    }
-    fmt.Println(string(b))
-}
-```
-
-There are other functions to help generate specific fields. Please reference the [reference documentation](https://pkg.go.dev/github.com/sudorandom/fauxrpc) for more information on that.
+There are other functions to help generate specific fields. Please reference the [reference documentation](https://pkg.go.dev/github.com/sudorandom/fauxrpc) for more information on that. Check out the [example directory](https://github.com/sudorandom/fauxrpc/tree/main/example) in the repo for more examples.
