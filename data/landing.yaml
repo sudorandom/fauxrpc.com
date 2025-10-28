@@ -1,0 +1,199 @@
+# Hero
+hero:
+  enable: true
+  weight: 10
+  template: hero
+
+  backgroundImage:
+    path: "template"
+    filename:
+      desktop: "gradient-desktop.webp"
+      mobile: "gradient-mobile.webp"
+
+  title: "FauxRRC"
+  subtitle: FauxRPC is a powerful tool that empowers you to accelerate development and testing by effortlessly generating fake implementations of gRPC, gRPC-Web, Connect, and REST services. If you have a protobuf-based workflow, this tool could help.
+
+  image:
+    path: "images"
+    filename: "dashboard-request-log-home.png"
+    alt: "FauxRPC Request Log Screenshot"
+    boxShadow: true
+    rounded: true
+
+  ctaButton:
+    icon: rocket_launch
+    btnText: "Get Started"
+    url: "/docs/intro/"
+  cta2Button:
+    icon: code
+    btnText: "Source"
+    url: "https://github.com/sudorandom/fauxrpc"
+
+  info: "**Open Source** MIT Licensed."
+
+# Feature Grid
+featureGrid:
+  enable: true
+  weight: 20
+  template: feature grid
+
+  title: Why choose FauxRPC?
+  subtitle: FauxRPC is a powerful tool that empowers you to accelerate development and testing by effortlessly generating fake implementations of gRPC, gRPC-Web, Connect, and REST services. If you have a protobuf-based workflow, this tool could help.
+
+  items:
+    - title: Accelerate Development
+      icon: speed
+      description: Unblock client-side and frontend teams by providing an instant, mock backend.
+
+    - title: Improve Test Reliability
+      icon: rule
+      description: Create stable and predictable test environments with configurable mock data and stubs.
+
+    - title: Realistic Data Mocking
+      icon: auto_awesome
+      description: Generate realistic fake data that automatically respects your protovalidate constraints.
+
+    - title: Flexible and Extensible
+      icon: settings_ethernet
+      description: Support for multiple protocols and dynamic schema loading to fit your workflow.
+
+    - title: Easy to Use
+      icon: thumb_up
+      description: Get started quickly with an interactive dashboard and simple configuration.
+
+    - title: Testcontainer Support
+      icon: integration_instructions
+      description: "(go only) Superpower your integration tests by using FauxRPC with Testcontainers."
+
+dashboardFeature:
+  enable: true
+  weight: 30
+  template: image text
+  title: Dashboard
+  subtitle: FauxRPC includes a web dashboard that provides real-time insights into your server's operations, including request logs, response previews, and configuration settings.
+
+  list:
+    - text: See an overview of server activity
+      icon: insights
+
+    - text: View real-time request logs
+      icon: speed
+
+    - text: View the schema of your loaded protobuf files
+      icon: schema
+
+  image:
+    path: "images"
+    filename: "dashboard.png"
+    alt: "Dashboard screenshot"
+
+  imgOrder:
+    desktop: 1
+    mobile: 2
+
+  ctaButton:
+    text: Learn more
+    url: "/docs/server/dashboard/"
+
+dynamicDataFeature:
+  enable: true
+  weight: 40
+  template: image text
+  title: Dynamic Data Generation
+  subtitle: FauxRPC automatically generates realistic fake data for your protobuf messages. This helps you build and test your applications without needing real backend data.
+  list:
+    - text: Automatically generated fake data for all fields.
+      icon: auto_awesome
+    - text: Augments responses with protovalidate rules to ensure data integrity.
+      icon: rule
+    - text: Enforces protovalidate constraints in responses.
+      icon: check_circle
+  image:
+    path: "images"
+    filename: "dashboard-schema1.png"
+    alt: "Dynamic Data Generation"
+  imgOrder:
+    desktop: 2
+    mobile: 1
+  ctaButton:
+    text: Learn more
+    url: "/docs/faking-data/"
+
+stubbingFeature:
+  enable: true
+  weight: 50
+  template: image text
+  title: Configurable Stubs
+  subtitle: Define custom responses for specific RPC calls. FauxRPC allows you to configure stubs with static data or load them dynamically from an API, giving you full control over your mock environment.
+  list:
+    - text: Define static data for predictable responses.
+      icon: get_app
+    - text: Load stubs dynamically from an external API for more complex scenarios.
+      icon: cloud_download
+    - text: Easily configure and manage your stubs through a simple interface.
+      icon: settings
+    - text: Stubs can be activated based on request parameters for more granular control.
+      icon: tune
+  image:
+    path: "images"
+    filename: "dashboard-stubs.png"
+    alt: "Configurable Stubs"
+  imgOrder:
+    desktop: 1
+    mobile: 1
+  ctaButton:
+    text: Learn more
+    url: "/docs/server/stubs/"
+
+multiProtocolFeature:
+  enable: true
+  weight: 60
+  template: image text
+  title: Multi-Protocol Support
+  subtitle: FauxRPC is designed to work seamlessly with your existing infrastructure, supporting a wide range of protocols.
+  list:
+    - text: Full support for [gRPC](https://grpc.io/), including server reflection.
+      icon: "hub"
+    - text: Compatibility with [gRPC-Web](https://grpc.io/docs/platforms/web/) for browser-based applications.
+      icon: "web"
+    - text: Support for the [Connect](https://connectrpc.com/) protocol.
+      icon: "sync_alt"
+    - text: REST support for traditional HTTP clients. Using [google.api.http annotations](https://grpc-ecosystem.github.io/grpc-gateway/docs/tutorials/adding_annotations/).
+      icon: "http"
+  image:
+    path: "images"
+    filename: "dashboard-request-log.png"
+    alt: "Multi-Protocol Support"
+  imgOrder:
+    desktop: 2
+    mobile: 1
+  ctaButton:
+    text: Learn more
+    url: "/docs/server/multi-protocol-support/"
+
+dynamicSchemaFeature:
+  enable: true
+  weight: 70
+  template: image text
+  title: Dynamic Schema Loading
+  subtitle: FauxRPC can load protobuf definitions from various sources, allowing for dynamic schema reconfiguration without restarting the server.
+  list:
+    - text: Load protobufs from local files or directories.
+      icon: "folder"
+    - text: Fetch schemas using gRPC reflection for live services.
+      icon: "sensors"
+    - text: Dynamically reconfigure the schema on-the-fly.
+      icon: "dynamic_feed"
+  image:
+    path: "images"
+    filename: "dashboard-schema2.png"
+    alt: "Dynamic Schema Loading"
+  imgOrder:
+    desktop: 1
+    mobile: 1
+  ctaButton:
+    text: Learn more
+    url: "/docs/inputs/"
+
+imageCompare:
+  enable: false

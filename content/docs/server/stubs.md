@@ -4,8 +4,9 @@ weight: 70
 slug: stubs
 aliases:
 - /docs/stubs/
+description: "Define precise responses for your gRPC APIs using FauxRPC stubs, enabling comprehensive testing and development."
+icon: "design_services"
 ---
-FauxRPC stubs allow you to define precise responses for your gRPC APIs, enabling comprehensive testing and development without relying on a real backend. Define static responses, introduce dynamic behavior with CEL expressions, and manage stub priority for granular control over your mock services.
 
 ### Stub Definition
 

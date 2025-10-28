@@ -2,6 +2,8 @@
 title: 'Go Library'
 weight: 60
 slug: library
+description: "Learn how to use FauxRPC as a Go library to generate fake data for your protobuf messages."
+icon: "book"
 ---
 
 You can use FauxRPC as a Go library as well. [Click here](https://pkg.go.dev/github.com/sudorandom/fauxrpc) for the most up-to-date documentation.

@@ -2,6 +2,8 @@
 title: 'fauxrpc generate'
 weight: 50
 slug: fauxrpc-generate
+description: "A guide to the `fauxrpc generate` command, which allows you to generate fake data for your Protobuf message types."
+icon: "build"
 ---
 
 The `fauxrpc generate` command is a handy tool within FauxRPC that allows you to generate fake data for your Protobuf message types. This is useful for testing, seeding databases, or creating realistic (and often-times silly) examples for documentation. Here's a breakdown of the command and its options:

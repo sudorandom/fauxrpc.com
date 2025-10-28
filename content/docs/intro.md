@@ -4,23 +4,24 @@ weight: 10
 slug: intro
 aliases:
   - "/docs/"
+description: "An introduction to FauxRPC, a powerful tool for generating fake implementations of gRPC, gRPC-Web, Connect, and REST services."
+icon: "rocket_launch"
 ---
 
-## FauxRPC
 **FauxRPC** is a powerful tool that empowers you to accelerate development and testing by effortlessly generating fake implementations of gRPC, gRPC-Web, Connect, and REST services. If you have a protobuf-based workflow, this tool could help.
 
 ## How it Works
 FauxRPC leverages your Protobuf definitions to generate fake services that mimic the behavior of real ones. You can easily configure the fake data returned, allowing you to simulate various scenarios and edge cases. It takes in `*.proto` files or protobuf descriptors (in binpb, json, txtpb, yaml formats), then it automatically starts up a server that can speak gRPC/gRPC-Web/Connect and REST (as long as there are `google.api.http` annotations defined). Descriptors contain all of the information found in a set of `.proto` files. You can generate them with `protoc` or the `buf build` command.
 
-![](</diagram.svg>)
+{{< img src="/images/diagrams/diagram.svg" width="800" />}}
 
 ### Basic Usage
 
 Define your protobuf file and start FauxRPC. Now you instantly have a working service to start integrating against! You can use tools like **[grpcurl](https://github.com/fullstorydev/grpcurl)**, **[buf curl](https://buf.build/docs/reference/cli/buf/curl/)** or even **[curl](https://curl.se/)**.
 
-{{< tabs items="greet.proto,Run FauxRPC,Use" >}}
-{{< tab >}}
+
 This is an example protobuf file.
+
 ```protobuf
 syntax = "proto3";
 
@@ -42,8 +43,7 @@ message HelloReply {
   string message = 1;
 }
 ```
-{{< /tab >}}
-{{< tab >}}
+
 ```shell
 $ fauxrpc run --schema greet.proto
 FauxRPC (0.2.0 (697fec09ce17947605f1014095691bba43dac2ce) @ 2024-11-16T14:40:32Z; go1.23.3) - 1 services loaded
@@ -55,8 +55,7 @@ $ buf curl --http2-prior-knowledge http://127.0.0.1:6660 --list-methods
 $ buf curl --http2-prior-knowledge http://127.0.0.1:6660/[METHOD_NAME]
 Server started.
 ```
-{{< /tab >}}
-{{< tab >}}
+
 Now that you have FauxRPC running, you can make requests to it! Let's start with grpcurl:
 ```shell
 $ grpcurl -plaintext 127.0.0.1:6660 list
@@ -94,15 +93,13 @@ $ buf curl -d '{"name": "Kevin"}' --protocol=grpcweb --http2-prior-knowledge htt
 }
 ```
 And obviously, generated gRPC/gRPC-Web/Connect clients all work as expected as well.
-{{< /tab >}}
-{{< /tabs >}}
+
 
 ### REST
 
 You can use **[google.api.http](https://github.com/googleapis/googleapis/blob/master/google/api/http.proto)** annotations to define REST-like behavior for protobuf methods. FauxRPC can use these as well to expose your REST APIs.
 
-{{< tabs items="users.proto,buf.yaml,Run FauxRPC,Use" >}}
-{{< tab >}}
+
 This is an example protobuf file that includes an annotation, mapping `examples.users.UserService/GetUser` to `GET /user/{user_id}`.
 ```protobuf
 syntax = "proto3";
@@ -118,16 +115,14 @@ service UserService {
   }
 }
 ```
-{{< /tab >}}
-{{< tab >}}
+
 Because we have a remote dependency, we use buf to manage this for us `buf.yaml`:
 ```yaml
 version: v2
 deps:
  - buf.build/googleapis/googleapis
 ```
-{{< /tab >}}
-{{< tab >}}
+
 Run the FauxRPC server. Instead of passing the protobuf file(s) as `--schema` we are building the **[protobuf descriptors](https://buf.build/docs/reference/descriptors/)** using `buf build`. This includes all remote repositories from the **[buf schema registry](https://buf.build/product/bsr)**.
 ```shell
 $ buf dep update
@@ -142,8 +137,7 @@ $ buf curl --http2-prior-knowledge http://127.0.0.1:6660 --list-methods
 $ buf curl --http2-prior-knowledge http://127.0.0.1:6660/[METHOD_NAME]
 Server started.
 ```
-{{< /tab >}}
-{{< tab >}}
+
 Now that you have FauxRPC running, you can make requests to it! Let's start with grpcurl:
 ```shell
 $ curl http://127.0.0.1:6660/user/1234
@@ -160,15 +154,11 @@ $ buf curl -d '{}' --http2-prior-knowledge http://127.0.0.1:6660/examples.users.
 }
 ```
 And obviously, generated gRPC/gRPC-Web/Connect clients all work as expected as well.
-{{< /tab >}}
-{{< /tabs >}}
 
 ### Protovalidate
 
 You can use **[protovalidate](https://buf.build/bufbuild/protovalidate/docs/main:buf.validate)** annotations to define constraints for protobuf fields and messages. FauxRPC can use these to both produce more realistic data and for validation of requests.
 
-{{< tabs items="users.proto,buf.yaml,Run FauxRPC,Use" >}}
-{{< tab >}}
 This is an example protobuf file that includes a few protovalidate annotations.
 ```protobuf
 syntax = "proto3";
@@ -191,16 +181,13 @@ service GreetService {
   rpc Greet(GreetRequest) returns (GreetResponse) {}
 }
 ```
-{{< /tab >}}
-{{< tab >}}
 Because we have a remote dependency, we use buf to manage this for us `buf.yaml`:
 ```yaml
 version: v2
 deps:
  - buf.build/bufbuild/protovalidate
 ```
-{{< /tab >}}
-{{< tab >}}
+
 Run the FauxRPC server. Instead of passing the protobuf file(s) as `--schema` we are building the **[protobuf descriptors](https://buf.build/docs/reference/descriptors/)** using `buf build`. This includes all remote repositories from the **[buf schema registry](https://buf.build/product/bsr)**.
 ```shell
 $ buf dep update
@@ -215,8 +202,7 @@ $ buf curl --http2-prior-knowledge http://127.0.0.1:6660 --list-methods
 $ buf curl --http2-prior-knowledge http://127.0.0.1:6660/[METHOD_NAME]
 Server started.
 ```
-{{< /tab >}}
-{{< tab >}}
+
 ```shell
 $ buf curl -d '{"name": "Kevin"}' --http2-prior-knowledge http://127.0.0.1:6660/examples.protovalidate.GreetService/Greet
 {
@@ -247,8 +233,6 @@ $ buf curl -d '{}' --http2-prior-knowledge http://127.0.0.1:6660/examples.protov
    ]
 }
 ```
-{{< /tab >}}
-{{< /tabs >}}
 
 ## Status: Alpha
 This project is just starting out. I plan to add a lot of things that make this tool actually usable in more situations.

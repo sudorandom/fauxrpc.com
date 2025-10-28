@@ -99,3 +99,103 @@ li {
     padding-top: 0;
     padding-bottom: 0;
 }
+
+/* Cool FauxRPC text effect */
+.fauxrpc-cool-effect {
+  font-size: 8rem; /* Giant text */
+  font-weight: bold;
+  text-align: center;
+  background: linear-gradient(90deg, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 200% 200%;
+  animation: gradient-animation 5s ease infinite;
+}
+
+@keyframes gradient-animation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Subtle animated background for FauxRPC text */
+.fauxrpc-background-effect {
+  padding: 20px; /* Some padding around the text */
+  border-radius: 10px; /* Slightly rounded corners */
+  background: linear-gradient(45deg, #d0d0d0, #ffffff, #d0d0d0); /* More contrast for light background gradient */
+  background-size: 400% 400%; /* Larger size for smoother animation */
+  animation: background-gradient-animation 10s ease infinite; /* Faster animation */
+  display: inline-block; /* To make padding and border-radius work correctly with text-align: center */
+}
+
+@media (prefers-color-scheme: dark) {
+  .fauxrpc-background-effect {
+    background: linear-gradient(45deg, #1a1a1a, #4a4a4a, #1a1a1a); /* More contrast for dark background gradient */
+  }
+}
+
+@keyframes background-gradient-animation {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.responsive-code-blocks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px; /* Space between blocks */
+  margin-top: 20px;
+  justify-content: center; /* Center the blocks */
+}
+
+.code-block-item {
+  flex: 1 1 calc(33% - 20px); /* Default to 3 columns, accounting for gap */
+  min-width: 300px; /* Minimum width before wrapping */
+  background-color: var(--hextra-background-dark); /* Use theme's dark background for consistency */
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  display: flex; /* For internal content alignment */
+  flex-direction: column;
+}
+
+.code-block-item h3 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: var(--hextra-text-color); /* Use theme's text color */
+  font-size: 1.2em;
+  font-weight: bold;
+  border-bottom: 2px solid var(--hextra-primary-color);
+  padding-bottom: 5px;
+}
+
+.code-block-item pre {
+  flex-grow: 1; /* Allow code blocks to take available height */
+  margin-top: 0; /* Remove default pre margin */
+  margin-bottom: 0; /* Remove default pre margin */
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .code-block-item {
+    flex: 1 1 calc(50% - 20px); /* 2 columns on medium screens */
+  }
+}
+
+@media (max-width: 768px) {
+  .code-block-item {
+    flex: 1 1 100%; /* 1 column on small screens */
+  }
+}

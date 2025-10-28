@@ -2,6 +2,8 @@
 title: 'Workflow'
 weight: 15
 slug: workflow
+description: "Learn how FauxRPC can accelerate your development workflow by enabling parallel development and faster feedback loops."
+icon: "account_tree"
 ---
 
 ## Typical Workflow
@@ -21,7 +23,7 @@ With FauxRPC, you can parallelize the last 3 steps. Here's what it might look li
 2. Generate Clients and Server Stubs
 3. The backend team implements the service *while the frontend engineers can already start working*
 
-![](</workflow.svg>)
+{{< img src="/images/diagrams/workflow.svg" width="800" />}}
 
 With FauxRPC, you can start iterating on the schema much quicker and in a much more natural way. Many times, flaws in the schema aren't discovered until you start using the service, so getting to a mocked-out prototype quicker can make the entire process faster.
 

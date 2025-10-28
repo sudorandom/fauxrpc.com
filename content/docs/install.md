@@ -2,6 +2,8 @@
 title: 'Install'
 weight: 20
 slug: install
+description: "Instructions for installing FauxRPC using pre-built binaries, Docker, or from source."
+icon: "download"
 ---
 
 ## Pre-built binaries

@@ -4,6 +4,8 @@ weight: 60
 slug: multi-protocol-support
 aliases:
 - /docs/multi-protocol-support/
+description: "Explore FauxRPC's support for multiple protocols, including gRPC, gRPC-Web, Connect, and REST."
+icon: "hub"
 ---
 
 ## gRPC/gRPC-Web/Connect

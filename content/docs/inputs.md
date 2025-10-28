@@ -5,6 +5,8 @@ slug: inputs
 aliases:
 - /docs/inputs/
 - /docs/server/inputs/
+description: "Learn about the versatile ways to provide input to FauxRPC, including Protobuf files, descriptor sets, server reflection, and the Buf Schema Registry."
+icon: "input"
 ---
 
 FauxRPC offers versatile ways to define the services it emulates. Whether you have Protobuf files, descriptor sets, a live gRPC server, or even Buf Schema Registry images, you can seamlessly provide the necessary input for FauxRPC to generate mock responses. This flexibility empowers you to test and develop against various scenarios without relying on actual backend implementations.
@@ -68,6 +70,9 @@ $ fauxrpc run --schema=buf.build/bufbuild/registry
 ```
 
 This will start a fake version of the BSR API by downloading descriptors for [bufbuild/registry](https://buf.build/bufbuild/registry) from the BSR and using them with FauxRPC. Very meta.
+
+## Buf Modules
+If you give FauxRPC a path to a [Buf Module](https://buf.build/docs/cli/modules-workspaces/), it will automatically generate descriptors and use those, seamlessly. Note that you must also have [the buf CLI](https://buf.build/product/cli) installed and available in the path.
 
 ## Multiple Sources
 You can define this `--schema` option as many times as you want. That means you can add services from multiple descriptors and even mix and match from descriptors and from server reflection:

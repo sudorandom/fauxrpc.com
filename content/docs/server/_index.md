@@ -1,6 +1,9 @@
 ---
 slug: "_index"
+title: "Server"
 weight: 40
+description: "Learn how to use the FauxRPC server for testing and development."
+icon: "dns"
 ---
 
 FauxRPC is a handy tool that lets you quickly spin up a fake server that mimics a real gRPC server. This is super useful for testing and development when you don't have the actual backend service ready yet, or when you want to isolate your application from the real backend for focused testing.

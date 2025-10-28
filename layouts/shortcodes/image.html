@@ -1,0 +1,6 @@
+<figure>
+    <img src="{{ .Get "src" }}" alt="{{ .Get "alt" }}" style="max-width: {{ .Get "width" }}px; height: auto;">
+    {{ with .Inner }}
+        <figcaption>{{ . }}</figcaption>
+    {{ end }}
+</figure>

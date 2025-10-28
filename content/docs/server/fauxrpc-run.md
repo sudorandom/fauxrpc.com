@@ -2,6 +2,8 @@
 title: 'fauxrpc run'
 weight: 40
 slug: fauxrpc-run
+description: "A comprehensive guide to the `fauxrpc run` command and all its flags for starting a fake gRPC server."
+icon: "play_circle"
 ---
 
 The `fauxrpc run` command starts a fake gRPC server that you can use for testing and development without a real backend. Here's a breakdown of its options:

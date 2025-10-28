@@ -2,6 +2,8 @@
 title: 'fauxrpc stub'
 weight: 50
 slug: fauxrpc-stub
+description: "Learn how to use the `fauxrpc stub` command to define specific, static responses for your RPC calls."
+icon: "extension"
 ---
 
 FauxRPC's stubs allow you to specify what a response should look like. This is super useful for testing and setting up specific situations to happen during tests.

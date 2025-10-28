@@ -2,6 +2,8 @@
 title: 'fauxrpc registry'
 weight: 50
 slug: fauxrpc-registry
+description: "Understand how to manage the schema registry in FauxRPC, including adding and removing protobuf descriptors at runtime."
+icon: "storage"
 ---
 
 The "registry" refers to the schema that FauxRPC knows about. Since this a protobuf/gRPC focused tool "schema" comes in the from of [protobuf descriptors](https://buf.build/docs/reference/descriptors). Descriptors can come from many sources but the ways to input them are detailed further in the [inputs page](/docs/server/inputs/).

@@ -2,6 +2,8 @@
 title: 'Testcontainers'
 weight: 50
 slug: testcontainers
+description: "Simplify your gRPC testing by using FauxRPC with Testcontainers for lightweight, isolated environments."
+icon: "deployed_code"
 ---
 
 Testing gRPC services can be tricky. You often need a real server running, which can introduce complexity and slow down your tests. Using FauxRPC with [Testcontainers](https://testcontainers.com/) can simplify gRPC mocking.
