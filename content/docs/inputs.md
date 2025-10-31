@@ -80,4 +80,4 @@ You can define this `--schema` option as many times as you want. That means you 
 $ fauxrpc run --schema=https://demo.connectrpc.com --schema=./example.binpb
 ```
 
-All the same inputs described above also work for [fauxrpc curl](/docs/fauxrpc-curl/).
+All the same inputs described above also work for [fauxrpc curl](/docs/client/fauxrpc-curl/).

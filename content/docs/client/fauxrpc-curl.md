@@ -4,6 +4,8 @@ weight: 40
 slug: fauxrpc-curl
 description: "Learn how to use the `fauxrpc curl` command to send requests with dynamically generated fake data to any gRPC, gRPC-Web, or ConnectRPC service."
 icon: "send"
+aliases:
+ - /docs/fauxrpc-curl
 ---
 
 ## Flags
