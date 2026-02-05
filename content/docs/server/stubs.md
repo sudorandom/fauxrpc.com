@@ -8,37 +8,21 @@ description: "Define precise responses for your gRPC APIs using FauxRPC stubs, e
 icon: "design_services"
 ---
 
-### Stub Definition
+### Stub Configuration
 
-Stubs are defined using the `Stub` message in the `stubs.v1` package:
+Stubs can be defined using YAML or JSON. The configuration object has the following properties:
 
-```protobuf
-message Stub {
-  StubRef ref = 1 [(buf.validate.field).required = true];
-  oneof content {
-    bytes proto = 2;
-    string json = 3;
-    Error error = 4;
-  }
-  // CEL rule to decide if this stub should be used for a given request.
-  string active_if = 5;
-  // Similar to the json attribute but is a CEL expression that returns the result.
-  string cel_content = 6;
-  int32 priority = 7 [(buf.validate.field).int32 = {
-    gte: 0
-    lte: 100
-  }];
-}
-```
-
-* **ref:**  A `StubRef` message that identifies the target method or type for this stub.
-* **content:**  The response content, which can be:
-    * **proto:** Raw protobuf bytes.
-    * **json:** A JSON representation of the protobuf message.
-    * **error:** An `Error` message to simulate an error response.
-* **active_if:** A CEL expression that determines if this stub should be used based on the request.
+* **target:** The fully qualified name of the service method or message type (e.g., `connectrpc.eliza.v1.ElizaService/Say`).
+* **id:** A unique identifier for the stub.
+* **priority:** An integer from 0 to 100 (higher is more preferred).
+* **active_if:** A CEL expression that determines if this stub should be used.
+* **content:** A JSON object representing the response message.
 * **cel_content:** A CEL expression that dynamically generates the response content.
-* **priority:** An integer from 0 to 100 (higher is more preferred) to manage stub selection when multiple stubs match a request.
+* **stream:** Configuration for streaming responses.
+* **error_code:** gRPC status code for error responses.
+* **error_message:** Error message for error responses.
+
+A stub must define exactly one of `content`, `cel_content`, `stream`, or `error_code`/`error_message`.
 
 
 ### Adding Stubs
@@ -158,6 +142,90 @@ In this example:
 * The first stub provides a specific response for when `pet_id` is 1.
 * The second stub uses `cel_content` and the `gen` value to generate a dynamic response for any other `pet_id`.
 * This demonstrates how to handle specific cases with high-priority stubs while providing a general fallback with dynamic content.
+
+### Streaming Stubs
+
+FauxRPC supports streaming responses, allowing you to simulate server-side streaming or bidirectional streaming scenarios.
+
+**Stream Configuration:**
+
+* **items:** A list of items to stream.
+* **repeated:** If `true`, the sequence of items is repeated indefinitely (or until `done_after` is reached).
+* **done_after:** The total duration for the stream to run (e.g., `30s`, `1m`).
+
+**Stream Item Configuration:**
+
+Each item in the stream can have:
+
+* **content:** A JSON object representing the response message.
+* **cel_content:** A CEL expression that evaluates to the response message.
+* **error:** An object with `code` (integer) and `message` (string) to return an error.
+* **delay:** Duration to wait before sending this message (e.g., `100ms`, `1s`).
+
+**Example (basic stream):**
+
+```yaml
+stubs:
+  - id: introduce-basic
+    target: connectrpc.eliza.v1.ElizaService/Introduce
+    stream:
+      items:
+        - content: { sentence: "Hello, I am Eliza." }
+          delay: 100ms
+        - content: { sentence: "I am here to listen." }
+          delay: 500ms
+        - content: { sentence: "What is on your mind?" }
+          delay: 500ms
+```
+
+**Example (repeated stream with active_if):**
+
+```yaml
+stubs:
+  - id: introduce-repeated
+    target: connectrpc.eliza.v1.ElizaService/Introduce
+    active_if: req.name == "repeat"
+    priority: 10
+    stream:
+      repeated: true
+      done_after: 30s
+      items:
+        - content: { sentence: "This message repeats." }
+          delay: 1s
+```
+
+**Example (stream with dynamic content using CEL):**
+
+```yaml
+stubs:
+  - id: introduce-cel
+    target: connectrpc.eliza.v1.ElizaService/Introduce
+    active_if: req.name == "cel"
+    priority: 10
+    stream:
+      items:
+        - cel_content: "{'sentence': 'Hello ' + req.name}"
+          delay: 200ms
+        - cel_content: "{'sentence': 'Nice to meet you, ' + req.name}"
+          delay: 200ms
+```
+
+**Example (stream ending with an error):**
+
+```yaml
+stubs:
+  - id: introduce-error
+    target: connectrpc.eliza.v1.ElizaService/Introduce
+    active_if: req.name == "error"
+    priority: 10
+    stream:
+      items:
+        - content: { sentence: "Something is about to go wrong..." }
+          delay: 200ms
+        - error:
+            code: 13 # INTERNAL
+            message: "Something went wrong"
+```
 
 ### Using CEL for Dynamic Responses
 
