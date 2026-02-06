@@ -1,12 +1,18 @@
 ---
 title: 'Stubs'
-weight: 70
+weight: 60
 slug: stubs
 aliases:
-- /docs/stubs/
+- /docs/server/stubs/
 description: "Define precise responses for your gRPC APIs using FauxRPC stubs, enabling comprehensive testing and development."
 icon: "design_services"
 ---
+
+FauxRPC stubs allow you to define precise responses for your RPC calls. Stubs are supported by:
+
+*   **`fauxrpc run`**: The server will respond with the stubbed data when a matching request is received.
+*   **`fauxrpc curl`**: The client will use the stubbed data as the request payload.
+*   **`fauxrpc generate`**: The generator will output the stubbed data to stdout.
 
 ### Stub Configuration
 
@@ -233,6 +239,14 @@ CEL (Common Expression Language) allows you to define dynamic stub behavior base
 
 * **active_if:**  Determine if a stub should be used based on a condition.
 * **cel_content:**  Generate the response content dynamically.
+
+#### Available Variables
+
+The following variables are available in the CEL environment:
+
+*   **`req`**: The request message. You can access fields using dot notation (e.g., `req.name`).
+*   **`now`**: The current timestamp (google.protobuf.Timestamp).
+*   **`gen`**: A helper for generating random data (used in `cel_content` primarily).
 
 **Example (using `active_if`):**
 
