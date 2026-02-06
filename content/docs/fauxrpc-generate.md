@@ -21,6 +21,7 @@ Flags:
 
       --schema=SCHEMA,...    The modules to use for the RPC schema. It can be protobuf descriptors (binpb, json, yaml),
                              a URL for reflection or a directory of descriptors.
+      --stubs=STUBS,...      Stub files to use for data generation.
       --target=STRING        Protobuf type
       --format="json"        Format to output
       --seed=SEED            Seed for random number generator
@@ -37,6 +38,7 @@ Flags:
     - **Directory:** A path to a directory containing Protobuf descriptor files.
     * You can use this flag multiple times to combine services from different sources.
     * See the [Inputs](/docs/server/inputs/) page for more on this.
+- `--stubs`: A comma-separated list of YAML or JSON files containing [stubs](/docs/stubs). FauxRPC will use the stubs to generate the data for the target message.
 - `--target`: **Required.** Defines the fully qualified Protobuf message type for which you want to generate fake data (e.g., `my.package.v1.MyMessage`).
 - `--format`: Sets the output format for the generated data. Default is `json`.
 - `--seed`: Provides a seed value for the random number generator. This ensures consistent output if you need to generate the same data multiple times.
@@ -84,6 +86,26 @@ $ fauxrpc generate --schema=registry.binpb --target=buf.registry.module.v1.Commi
   "createdByUserId": "fe9e90c8706e4c7494a8ec8aaa847470",
   "sourceControlUrl": "https://www.directe-business.name/real-time/holistic/technologies"
 }
+```
+
+### Generating Data from Stubs
+
+You can use stubs to define the data you want to generate.
+
+```bash
+cat <<EOF > stubs.yaml
+stubs:
+  - target: connectrpc.eliza.v1.SayRequest
+    content:
+      sentence: "This is generated from a stub"
+EOF
+
+fauxrpc generate --schema=eliza.binpb --stubs=stubs.yaml --target=connectrpc.eliza.v1.SayRequest
+```
+
+This will output:
+```json
+{"sentence": "This is generated from a stub"}
 ```
 
 **Key Takeaways:**

@@ -24,6 +24,7 @@ Flags:
       --version                         Print version information and quit
 
       --schema=SCHEMA,...               RPC schema modules.
+      --stubs=STUBS,...                 Stub files to use for data generation.
   -a, --addr="http://127.0.0.1:6660"    Address to make a request to
   -p, --protocol="grpc"                 Protocol to use for requests.
   -e, --encoding="proto"                Encoding to use for requests.
@@ -38,6 +39,7 @@ Here is a comprehensive list of all the flags available for the `fauxrpc curl` c
 | **Target & Schema** |
 | `[<method>]` | `(none)` | The target service or method name to call (e.g., `my.service.v1.UserService/GetUser`). If omitted, `fauxrpc curl` will attempt to call all methods in the schema. |
 | `--schema=...` | `(none)` | 📜 Specifies the source for the RPC schema. It can be a local file path, a directory, or a URL. If not provided, the command will rely on server reflection. |
+| `--stubs=...` | `(none)` | A comma-separated list of YAML or JSON files containing [stubs](/docs/stubs). When provided, `fauxrpc curl` will use these stubs to generate the request data instead of random generation. |
 | `-a, --addr` | `http://127.0.0.1:6660` | The full address of the server to send the request to. |
 | **Protocol & Encoding** |
 | `-p, --protocol` | `grpc` | The protocol to use for the request. Valid options are `grpc`, `grpc-web`, and `connect`. |
@@ -94,4 +96,39 @@ fauxrpc curl \
   --protocol=grpc-web \
   --encoding=json \
   my.webapp.v1.AuthService/Login
+```
+
+### Use Stubs for Request Generation
+
+You can provide stub definitions to control the data sent in the request. This is useful for testing specific scenarios or ensuring consistent request data.
+
+```bash
+fauxrpc curl \
+  --schema=buf.build/connectrpc/eliza \
+  --stubs=stubs.yaml \
+  connectrpc.eliza.v1.ElizaService/Say
+```
+
+Where `stubs.yaml` contains:
+
+```yaml
+stubs:
+  - target: connectrpc.eliza.v1.ElizaService/Say
+    content:
+      sentence: "Hello from stubs!"
+```
+
+### Streaming Requests
+
+`fauxrpc curl` supports streaming requests. If the method accepts a stream, `fauxrpc curl` will send multiple messages. You can control this behavior using stubs with the `stream` configuration to define the sequence of messages to send.
+
+```yaml
+stubs:
+  - target: connectrpc.eliza.v1.ElizaService/Converse
+    stream:
+      items:
+        - content: { sentence: "Hello" }
+          delay: 100ms
+        - content: { sentence: "How are you?" }
+          delay: 500ms
 ```
