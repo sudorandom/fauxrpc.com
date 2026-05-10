@@ -56,4 +56,11 @@
         {{- template "_internal/google_analytics.html" . -}}
     {{- end -}}
     {{- end -}}
+    <!-- Dark Mode -->
+    {{ if eq .Site.Params.docs.darkMode true -}}
+        {{ $darkModeInit := resources.Get "/docs/js/darkmode-init.js" | js.Build | minify -}}
+        <script>{{ $darkModeInit.Content | safeJS }}</script>
+        {{ $darkModeSwitch := resources.Get "/docs/js/darkmode-switch.js" | js.Build | minify }}
+        <script>{{ $darkModeSwitch.Content | safeJS }}</script>
+    {{ end -}}
 </head>

@@ -1,7 +1,7 @@
 # Hero
 hero:
-  enable: true
-  weight: 10
+  enable: false
+  weight: 5
   template: hero
 
   backgroundImage:
@@ -13,13 +13,6 @@ hero:
   title: "FauxRPC"
   subtitle: FauxRPC is a powerful tool that empowers you to accelerate development and testing by effortlessly generating fake implementations of gRPC, gRPC-Web, Connect, and REST services. If you have a protobuf-based workflow, this tool could help.
 
-  image:
-    path: "images"
-    filename: "dashboard-request-log-home.png"
-    alt: "FauxRPC Request Log Screenshot"
-    boxShadow: true
-    rounded: true
-
   ctaButton:
     icon: rocket_launch
     btnText: "Get Started"
@@ -30,6 +23,12 @@ hero:
     url: "https://github.com/sudorandom/fauxrpc"
 
   info: "**Open Source** MIT Licensed."
+
+# Demo
+demo:
+  enable: true
+  weight: 10
+  template: demo
 
 # Feature Grid
 featureGrid:

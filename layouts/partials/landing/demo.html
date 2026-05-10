@@ -1,0 +1,514 @@
+<section class="demo-section py-5">
+    <div class="container">
+        <div class="row mb-5">
+            <div class="col-12 text-center">
+                <h1 class="display-3 fw-bold mb-3 text-body">FauxRPC</h1>
+                <p class="lead mb-4 mx-auto text-body-secondary" style="max-width: 800px;">
+                    FauxRPC is a powerful tool that empowers you to accelerate development and testing by effortlessly generating fake implementations of gRPC, gRPC-Web, Connect, and REST services. If you have a protobuf-based workflow, this tool could help.
+                </p>
+                <div class="d-flex justify-content-center gap-3 mb-5">
+                    <a href="/docs/intro/" class="btn btn-lg btn-primary px-4">
+                        <i class="material-icons align-middle me-1">rocket_launch</i> Get Started
+                    </a>
+                    <a href="https://github.com/sudorandom/fauxrpc" class="btn btn-lg btn-outline-primary px-4">
+                        <i class="material-icons align-middle me-1">code</i> Source
+                    </a>
+                </div>
+                <hr class="my-5 opacity-25">
+                <h2 class="h3 fw-bold text-body">Try FauxRPC in Your Browser</h2>
+                <p class="text-body-secondary">Edit the Protobuf definition below and see how FauxRPC generates realistic fake data.</p>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-lg-6">
+                <div class="card h-100 shadow-sm border-0 bg-body-tertiary">
+                    <div class="card-header d-flex justify-content-between align-items-center bg-body-secondary border-0 py-3">
+                        <span class="fw-bold text-body">Protobuf Definition</span>
+                        <div id="compile-status" class="badge bg-success">Valid</div>
+                    </div>
+                    <div class="card-body p-0 position-relative">
+                        <div id="proto-editor" style="height: 500px;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="card h-100 shadow-sm border-0 bg-body-tertiary">
+                    <div class="card-header d-flex justify-content-between align-items-center bg-body-secondary border-0 py-3">
+                        <span class="fw-bold text-body">FauxRPC Output (JSON)</span>
+                        <button id="generate-btn" class="btn btn-primary btn-sm px-3">
+                            <i class="material-icons align-middle me-1" style="font-size: 18px;">refresh</i> Generate
+                        </button>
+                    </div>
+                    <div class="card-body p-0">
+                        <div id="output-editor" style="height: 500px;"></div>
+                    </div>
+                    <div class="card-footer bg-body-secondary border-0 py-3">
+                        <div class="input-group input-group-sm">
+                            <label class="input-group-text bg-body border-0 fw-bold text-body" for="message-select">Message</label>
+                            <select class="form-select border-0 shadow-none bg-body text-body" id="message-select">
+                                <option selected>Loading...</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-12">
+                <div id="error-alert" class="alert alert-danger d-none" role="alert"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Load CodeMirror, Icons and WASM logic -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/nord.min.css">
+<style>
+    .demo-section {
+        background-color: var(--bs-body-bg);
+        padding-top: 100px !important;
+    }
+    @media (min-width: 992px) {
+        .demo-section {
+            padding-top: 140px !important;
+        }
+    }
+    .cm-editor { height: 100%; }
+    #proto-editor .CodeMirror, #output-editor .CodeMirror {
+        height: 500px;
+        font-family: 'Fira Code', monospace;
+        font-size: 14px;
+        border: none;
+    }
+    .error-line {
+        background-color: rgba(220, 53, 69, 0.2);
+    }
+    .CodeMirror {
+        background: transparent !important;
+    }
+
+    /* Dark Mode Toggle Styles */
+    .toggle-dark {
+        display: block;
+    }
+    .toggle-light {
+        display: none;
+    }
+    [data-dark-mode] .toggle-light {
+        display: block;
+    }
+    [data-dark-mode] .toggle-dark {
+        display: none;
+    }
+
+    /* Dark Mode Theme Overrides */
+    [data-dark-mode] {
+        --bs-body-bg: #181921;
+        --bs-body-color: #dee2e6;
+        --bs-tertiary-bg: #22232b;
+        --bs-secondary-bg: #1c1d24;
+    }
+
+    [data-dark-mode] body {
+        background-color: var(--bs-body-bg);
+        color: var(--bs-body-color);
+    }
+
+    [data-dark-mode] .text-muted,
+    [data-dark-mode] .text-body-secondary {
+        color: #b6b9be !important;
+    }
+
+    [data-dark-mode] .card,
+    [data-dark-mode] .bg-body-tertiary {
+        background-color: var(--bs-tertiary-bg) !important;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.3) !important;
+        border: 1px solid #292a35 !important;
+    }
+
+    [data-dark-mode] .card-header,
+    [data-dark-mode] .card-footer,
+    [data-dark-mode] .bg-body-secondary {
+        background-color: var(--bs-secondary-bg) !important;
+        border-color: #292a35 !important;
+    }
+
+    [data-dark-mode] hr {
+        border-color: #ffffff;
+        opacity: 0.1;
+    }
+
+    [data-dark-mode] .input-group-text,
+    [data-dark-mode] .form-select {
+        background-color: var(--bs-secondary-bg) !important;
+        color: #ffffff !important;
+        border-color: #292a35 !important;
+    }
+    
+    [data-dark-mode] h1,
+    [data-dark-mode] h2,
+    [data-dark-mode] h3,
+    [data-dark-mode] h4,
+    [data-dark-mode] h5,
+    [data-dark-mode] h6,
+    [data-dark-mode] .title,
+    [data-dark-mode] .text-body {
+        color: #ffffff !important;
+    }
+
+    [data-dark-mode] .btn-outline-primary {
+        color: #4d80ff;
+        border-color: #4d80ff;
+    }
+
+    [data-dark-mode] .btn-outline-primary:hover {
+        background-color: #4d80ff;
+        color: #ffffff;
+    }
+
+    #compile-status.bg-success {
+        background-color: #198754 !important; /* Darker green for better contrast */
+        color: #ffffff !important;
+    }
+
+    /* Fix navbar in dark mode */
+    [data-dark-mode] #topnav {
+        background-color: rgba(24, 25, 33, 0.95);
+        border-bottom: 1px solid #292a35;
+    }
+
+    [data-dark-mode] #topnav .navigation-menu > li > a {
+        color: #dee2e6 !important;
+    }
+
+    [data-dark-mode] #topnav .navigation-menu > li:hover > a {
+        color: #4d80ff !important;
+    }
+
+    [data-dark-mode] #topnav .logo svg path {
+        fill: #ffffff !important;
+    }
+
+    /* Generation Animations */
+    @keyframes pulse-opacity {
+        0% { opacity: 1; }
+        50% { opacity: 0.4; }
+        100% { opacity: 1; }
+    }
+
+    @keyframes fade-pop {
+        0% { transform: scale(0.99); opacity: 0.8; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+
+    .generating-state {
+        pointer-events: none;
+    }
+
+    .generating-state .material-icons {
+        animation: rotate 1s linear infinite;
+    }
+
+    @keyframes rotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    .output-pop {
+        animation: fade-pop 0.2s ease-out;
+    }
+
+    /* Digital Glitch Animation */
+    @keyframes glitch-skew {
+        0% { transform: skew(0deg); }
+        20% { transform: skew(-1deg); }
+        40% { transform: skew(1deg); }
+        60% { transform: skew(-0.5deg); }
+        80% { transform: skew(0.5deg); }
+        100% { transform: skew(0deg); }
+    }
+
+    @keyframes glitch-offset {
+        0% { transform: translate(0, 0); filter: hue-rotate(0deg); }
+        25% { transform: translate(3px, -2px); filter: hue-rotate(90deg); }
+        50% { transform: translate(-3px, 2px); filter: hue-rotate(180deg); }
+        75% { transform: translate(2px, 1px); filter: hue-rotate(270deg); }
+        100% { transform: translate(0, 0); filter: hue-rotate(360deg); }
+    }
+
+    .glitch-active {
+        animation: glitch-skew 0.2s steps(2) infinite, glitch-offset 0.15s steps(2) infinite;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .glitch-active::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(77, 128, 255, 0.1);
+        z-index: 10;
+        pointer-events: none;
+    }
+    </style>    [data-dark-mode] .navbar-toggle.btn-soft-light {
+        color: #ffffff !important;
+        border-color: #292a35 !important;
+    }
+
+    [data-dark-mode] .navbar-toggle.btn-soft-light:hover,
+    [data-dark-mode] .navbar-toggle.btn-soft-light:focus {
+        background-color: #2b303b !important;
+        color: #4d80ff !important;
+    }
+
+    [data-dark-mode] .navbar-toggle .lines span {
+        background-color: currentColor !important;
+    }
+
+    [data-dark-mode] .footer.footer-light {
+        background-color: #1c1d24 !important;
+        border-top: 1px solid #292a35 !important;
+        color: #dee2e6 !important;
+    }
+
+    [data-dark-mode] .footer.footer-light p {
+        color: #b6b9be !important;
+    }
+
+    @media (max-width: 991px) {
+        [data-dark-mode] #navigation {
+            background-color: #1c1d24 !important;
+            box-shadow: 0 5px 13px rgba(0, 0, 0, 0.5) !important;
+        }
+        [data-dark-mode] .navigation-menu > li > a {
+            color: #dee2e6 !important;
+            border-bottom: 1px solid #292a35 !important;
+        }
+        [data-dark-mode] .navigation-menu > li:last-child > a {
+            border-bottom: none !important;
+        }
+    }
+</style>
+
+<script src="/wasm_exec.js"></script>
+<!-- Using CodeMirror 5 for simplicity with CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/protobuf/protobuf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/javascript/javascript.min.js"></script>
+
+<script>
+    const defaultProto = 'syntax = "proto3";\n\npackage examples.demo;\n\nimport "google/api/annotations.proto";\nimport "buf/validate/validate.proto";\nimport "google/protobuf/timestamp.proto";\nimport "google/protobuf/duration.proto";\nimport "google/protobuf/struct.proto";\n\nservice DemoService {\n  rpc GetItem(GetItemRequest) returns (GetItemResponse) {\n    option (google.api.http) = {\n      get: "/v1/items/{id}"\n    };\n  }\n}\n\nmessage GetItemRequest {\n  string id = 1 [(buf.validate.field).string.uuid = true];\n}\n\nmessage GetItemResponse {\n  string name = 1 [(buf.validate.field).string.min_len = 3];\n  int32 quantity = 2 [(buf.validate.field).int32.gt = 0];\n  ItemType type = 3;\n  repeated string tags = 4 [(buf.validate.field).repeated.min_items = 1];\n  \n  map<string, string> attributes = 5;\n  \n  google.protobuf.Timestamp created_at = 6;\n  google.protobuf.Duration duration = 7;\n  google.protobuf.Struct extra_info = 8;\n  \n  oneof status {\n    string status_message = 9;\n    int32 status_code = 10;\n  }\n}\n\nenum ItemType {\n  ITEM_TYPE_UNSPECIFIED = 0;\n  ITEM_TYPE_PHYSICAL = 1;\n  ITEM_TYPE_DIGITAL = 2;\n}\n';
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        const getEditorTheme = () => {
+            return document.documentElement.hasAttribute('data-dark-mode') ? 'nord' : 'default';
+        };
+
+        const protoEditor = CodeMirror(document.getElementById('proto-editor'), {
+            value: defaultProto,
+            mode: 'protobuf',
+            theme: getEditorTheme(),
+            lineNumbers: true,
+            lineWrapping: true,
+        });
+
+        const outputEditor = CodeMirror(document.getElementById('output-editor'), {
+            value: '',
+            mode: { name: 'javascript', json: true },
+            theme: getEditorTheme(),
+            lineNumbers: true,
+            readOnly: true,
+            lineWrapping: true,
+        });
+
+        // Listen for theme changes (Site-wide theme toggle)
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.attributeName === 'data-dark-mode') {
+                    const newTheme = getEditorTheme();
+                    protoEditor.setOption('theme', newTheme);
+                    outputEditor.setOption('theme', newTheme);
+                }
+            });
+        });
+        observer.observe(document.documentElement, { attributes: true });
+
+        // Backup event listener for the mode switcher in case the global script is slow
+        const toggleTheme = () => {
+            const isDark = document.documentElement.hasAttribute('data-dark-mode');
+            if (isDark) {
+                document.documentElement.removeAttribute('data-dark-mode');
+                localStorage.setItem('theme', 'light');
+            } else {
+                document.documentElement.setAttribute('data-dark-mode', '');
+                localStorage.setItem('theme', 'dark');
+            }
+        };
+
+        const modeBtn = document.getElementById('mode');
+        if (modeBtn) {
+            modeBtn.addEventListener('click', toggleTheme);
+        }
+
+        const modeMobileBtn = document.getElementById('mode-mobile');
+        if (modeMobileBtn) {
+            modeMobileBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                toggleTheme();
+            });
+        }
+
+        // Define toggleMenu globally to fix ReferenceError
+        window.toggleMenu = function() {
+            document.getElementById('isToggle').classList.toggle('open');
+            var isOpen = document.getElementById('navigation')
+            if (isOpen.style.display === "block") {
+                isOpen.style.display = "none";
+            } else {
+                isOpen.style.display = "block";
+            }
+        };
+
+        const messageSelect = document.getElementById('message-select');
+
+        const go = new Go();
+        const wasmResult = await WebAssembly.instantiateStreaming(fetch("/fauxrpc.wasm"), go.importObject);
+        go.run(wasmResult.instance);
+
+        let currentFds = null;
+        let lastErrorWidgets = [];
+
+        const updateMessageList = (fds) => {
+            const messages = listMessages(fds);
+            const currentSelected = messageSelect.value;
+            messageSelect.innerHTML = '';
+            
+            messages.forEach(msg => {
+                const opt = document.createElement('option');
+                opt.value = msg;
+                opt.textContent = msg;
+                if (msg === currentSelected || (currentSelected === 'Loading...' && msg.endsWith('Response'))) {
+                    opt.selected = true;
+                }
+                messageSelect.appendChild(opt);
+            });
+
+            if (messageSelect.options.length > 0 && messageSelect.selectedIndex === -1) {
+                messageSelect.selectedIndex = 0;
+            }
+        };
+
+        const compileProto = () => {
+            const protoContent = protoEditor.getValue();
+            const files = {
+                "demo.proto": protoContent
+            };
+
+            // Clear previous errors
+            lastErrorWidgets.forEach(w => {
+                if (w.clear) w.clear();
+            });
+            lastErrorWidgets = [];
+            document.getElementById('error-alert').classList.add('d-none');
+            document.getElementById('compile-status').textContent = 'Valid';
+            document.getElementById('compile-status').className = 'badge bg-success';
+
+            const result = parseProto(JSON.stringify(files));
+            if (result.error) {
+                showGeneralError(result.error);
+                return null;
+            }
+
+            if (result.compilationErrors) {
+                const errors = JSON.parse(result.compilationErrors);
+                showCompilationErrors(errors);
+                return null;
+            }
+
+            currentFds = result.fileDescriptorSet;
+            updateMessageList(currentFds);
+            return currentFds;
+        };
+
+        const showGeneralError = (err) => {
+            const alert = document.getElementById('error-alert');
+            alert.textContent = err;
+            alert.classList.remove('d-none');
+            document.getElementById('compile-status').textContent = 'Error';
+            document.getElementById('compile-status').className = 'badge bg-danger';
+        };
+
+        const showCompilationErrors = (errors) => {
+            document.getElementById('compile-status').textContent = 'Error';
+            document.getElementById('compile-status').className = 'badge bg-danger';
+            
+            errors.forEach(err => {
+                const msg = document.createElement('div');
+                msg.className = 'text-danger small fw-bold p-1';
+                msg.textContent = '✖ ' + err.message;
+                
+                const widget = protoEditor.addLineWidget(err.line - 1, msg, { coverGutter: false, noHScroll: true });
+                lastErrorWidgets.push(widget);
+                
+                protoEditor.addLineClass(err.line - 1, 'background', 'error-line');
+                lastErrorWidgets.push({ clear: () => protoEditor.removeLineClass(err.line - 1, 'background', 'error-line') });
+            });
+        };
+
+        const generate = () => {
+            if (!currentFds) {
+                if (!compileProto()) return;
+            }
+
+            const messageName = messageSelect.value;
+            if (!messageName) return;
+
+            const genBtn = document.getElementById('generate-btn');
+            const outputContainer = document.getElementById('output-editor');
+            
+            // Add loading and glitch state
+            genBtn.classList.add('generating-state');
+            outputContainer.classList.add('glitch-active');
+            outputContainer.style.opacity = '0.8';
+            
+            // Short delay to let the animation start
+            setTimeout(() => {
+                const output = generateFakeData(messageName, currentFds);
+                
+                genBtn.classList.remove('generating-state');
+                outputContainer.classList.remove('glitch-active');
+                outputContainer.style.opacity = '1';
+                outputContainer.classList.remove('output-pop');
+                void outputContainer.offsetWidth; // Trigger reflow
+                outputContainer.classList.add('output-pop');
+
+                if (output.error) {
+                    showGeneralError(output.error);
+                } else {
+                    outputEditor.setValue(output);
+                }
+            }, 250); // Slightly longer for the glitch effect to be noticeable
+        };
+
+        document.getElementById('generate-btn').addEventListener('click', generate);
+        messageSelect.addEventListener('change', generate);
+
+        // Initial compilation and generation
+        setTimeout(() => {
+            compileProto();
+            generate();
+        }, 100);
+
+        // Compile on change with debounce
+        let debounceTimer;
+        protoEditor.on('change', () => {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(compileProto, 500);
+        });
+    });
+</script>
