@@ -303,7 +303,55 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/javascript/javascript.min.js"></script>
 
 <script>
-    const defaultProto = 'syntax = "proto3";\n\npackage examples.demo;\n\nimport "google/api/annotations.proto";\nimport "buf/validate/validate.proto";\nimport "google/protobuf/timestamp.proto";\nimport "google/protobuf/duration.proto";\nimport "google/protobuf/struct.proto";\n\nservice DemoService {\n  rpc GetItem(GetItemRequest) returns (GetItemResponse) {\n    option (google.api.http) = {\n      get: "/v1/items/{id}"\n    };\n  }\n}\n\nmessage GetItemRequest {\n  string id = 1 [(buf.validate.field).string.uuid = true];\n}\n\nmessage GetItemResponse {\n  string name = 1 [(buf.validate.field).string.min_len = 3];\n  int32 quantity = 2 [(buf.validate.field).int32.gt = 0];\n  ItemType type = 3;\n  repeated string tags = 4 [(buf.validate.field).repeated.min_items = 1];\n  \n  map<string, string> attributes = 5;\n  \n  google.protobuf.Timestamp created_at = 6;\n  google.protobuf.Duration duration = 7;\n  google.protobuf.Struct extra_info = 8;\n  \n  oneof status {\n    string status_message = 9;\n    int32 status_code = 10;\n  }\n}\n\nenum ItemType {\n  ITEM_TYPE_UNSPECIFIED = 0;\n  ITEM_TYPE_PHYSICAL = 1;\n  ITEM_TYPE_DIGITAL = 2;\n}\n';
+    const defaultProto = `syntax = "proto3";
+
+package examples.demo;
+
+import "google/api/annotations.proto";
+import "buf/validate/validate.proto";
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/duration.proto";
+import "google/protobuf/struct.proto";
+
+service DemoService {
+  rpc GetItem(GetItemRequest) returns (GetItemResponse) {
+    option (google.api.http) = {
+      get: "/v1/items/{id}"
+    };
+  }
+}
+
+message GetItemRequest {
+  string id = 1 [(buf.validate.field).string.uuid = true];
+}
+
+message GetItemResponse {
+  string name = 1 [(buf.validate.field).string.min_len = 3];
+  int32 quantity = 2 [(buf.validate.field).int32.gt = 0];
+  ItemType type = 3;
+  repeated string tags = 4 [
+    (buf.validate.field).repeated.min_items = 1,
+    (buf.validate.field).repeated.items.string.pattern = "^[a-z][a-z_]+[a-z]$"
+  ];
+
+  map<string, string> attributes = 5;
+
+  google.protobuf.Timestamp created_at = 6;
+  google.protobuf.Duration duration = 7;
+  google.protobuf.Struct extra_info = 8;
+
+  oneof status {
+    string status_message = 9;
+    int32 status_code = 10;
+  }
+}
+
+enum ItemType {
+  ITEM_TYPE_UNSPECIFIED = 0;
+  ITEM_TYPE_PHYSICAL = 1;
+  ITEM_TYPE_DIGITAL = 2;
+}
+`;
 
     document.addEventListener('DOMContentLoaded', async () => {
         const getEditorTheme = () => {
