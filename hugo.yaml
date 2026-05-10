@@ -1,5 +1,5 @@
 baseURL: https://fauxrpc.com/
-languageCode: en-us
+locale: en-us
 enableRobotsTXT: true
 enableGitInfo: true
 enableEmoji: true

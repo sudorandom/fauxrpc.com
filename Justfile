@@ -3,4 +3,12 @@ run: build-wasm
 	hugo server --buildDrafts --buildFuture --minify -p 1414
 
 build-wasm:
-	cd wasm-fauxrpc && GOOS=js GOARCH=wasm go build -o ../static/fauxrpc.wasm main.go
+	@if [ -f static/fauxrpc.wasm ] && [ -z "$(find wasm-fauxrpc -type f -newer static/fauxrpc.wasm)" ]; then \
+		echo "WASM is up to date."; \
+	else \
+		echo "Building WASM..."; \
+		cd wasm-fauxrpc && GOOS=js GOARCH=wasm go build -ldflags="-s -w" -o ../static/fauxrpc.wasm main.go; \
+		wasm-opt -Oz --all-features static/fauxrpc.wasm -o static/fauxrpc.wasm; \
+		gzip -9 -f static/fauxrpc.wasm; \
+		mv static/fauxrpc.wasm.gz static/fauxrpc.wasm; \
+	fi

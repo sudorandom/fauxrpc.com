@@ -378,7 +378,15 @@
         const messageSelect = document.getElementById('message-select');
 
         const go = new Go();
-        const wasmResult = await WebAssembly.instantiateStreaming(fetch("/fauxrpc.wasm"), go.importObject);
+        
+        // Load and decompress WASM
+        const response = await fetch("/fauxrpc.wasm");
+        const ds = new DecompressionStream("gzip");
+        const decompressedStream = response.body.pipeThrough(ds);
+        const wasmResult = await WebAssembly.instantiateStreaming(new Response(decompressedStream, {
+            headers: { "Content-Type": "application/wasm" }
+        }), go.importObject);
+        
         go.run(wasmResult.instance);
 
         let currentFds = null;

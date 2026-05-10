@@ -1,5 +1,6 @@
 [tools]
-go = "1.25.0"
-buf = "1.56.0"
-hugo-extended = "0.148.2"
-just = "1.42.4"
+go = "1.26.3"
+buf = "1.69.0"
+hugo-extended = "0.161.1"
+just = "1.51.0"
+tinygo = "latest"
