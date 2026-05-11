@@ -36,7 +36,7 @@
                     <div class="card-header d-flex justify-content-between align-items-center bg-body-secondary border-0 py-3">
                         <span class="fw-bold text-body">FauxRPC Output (JSON)</span>
                         <button id="generate-btn" class="btn btn-primary btn-sm px-3">
-                            <i class="material-icons align-middle me-1" style="font-size: 18px;">refresh</i> Generate
+                            <i class="material-icons align-middle me-1">refresh</i> Generate
                         </button>
                     </div>
                     <div class="card-body p-0">
@@ -62,7 +62,7 @@
 </section>
 
 <!-- Load CodeMirror, Icons and WASM logic -->
-<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons&display=block">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/nord.min.css">
 <style>
@@ -189,71 +189,6 @@
 
     [data-dark-mode] #topnav .logo svg path {
         fill: #ffffff !important;
-    }
-
-    /* Generation Animations */
-    @keyframes pulse-opacity {
-        0% { opacity: 1; }
-        50% { opacity: 0.4; }
-        100% { opacity: 1; }
-    }
-
-    @keyframes fade-pop {
-        0% { transform: scale(0.99); opacity: 0.8; }
-        100% { transform: scale(1); opacity: 1; }
-    }
-
-    .generating-state {
-        pointer-events: none;
-    }
-
-    .generating-state .material-icons {
-        animation: rotate 1s linear infinite;
-    }
-
-    @keyframes rotate {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
-    }
-
-    .output-pop {
-        animation: fade-pop 0.2s ease-out;
-    }
-
-    /* Digital Glitch Animation */
-    @keyframes glitch-skew {
-        0% { transform: skew(0deg); }
-        20% { transform: skew(-1deg); }
-        40% { transform: skew(1deg); }
-        60% { transform: skew(-0.5deg); }
-        80% { transform: skew(0.5deg); }
-        100% { transform: skew(0deg); }
-    }
-
-    @keyframes glitch-offset {
-        0% { transform: translate(0, 0); filter: hue-rotate(0deg); }
-        25% { transform: translate(3px, -2px); filter: hue-rotate(90deg); }
-        50% { transform: translate(-3px, 2px); filter: hue-rotate(180deg); }
-        75% { transform: translate(2px, 1px); filter: hue-rotate(270deg); }
-        100% { transform: translate(0, 0); filter: hue-rotate(360deg); }
-    }
-
-    .glitch-active {
-        animation: glitch-skew 0.2s steps(2) infinite, glitch-offset 0.15s steps(2) infinite;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .glitch-active::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(77, 128, 255, 0.1);
-        z-index: 10;
-        pointer-events: none;
     }
 
     [data-dark-mode] .navbar-toggle.btn-soft-light {
@@ -477,31 +412,13 @@
             const messageName = messageSelect.value;
             if (!messageName) return;
 
-            const genBtn = document.getElementById('generate-btn');
-            const outputContainer = document.getElementById('output-editor');
-            
-            // Add loading and glitch state
-            genBtn.classList.add('generating-state');
-            outputContainer.classList.add('glitch-active');
-            outputContainer.style.opacity = '0.8';
-            
-            // Short delay to let the animation start
-            setTimeout(() => {
-                const output = generateFakeData(messageName, currentFds);
-                
-                genBtn.classList.remove('generating-state');
-                outputContainer.classList.remove('glitch-active');
-                outputContainer.style.opacity = '1';
-                outputContainer.classList.remove('output-pop');
-                void outputContainer.offsetWidth; // Trigger reflow
-                outputContainer.classList.add('output-pop');
+            const output = generateFakeData(messageName, currentFds);
 
-                if (output.error) {
-                    showGeneralError(output.error);
-                } else {
-                    outputEditor.setValue(output);
-                }
-            }, 250); // Slightly longer for the glitch effect to be noticeable
+            if (output.error) {
+                showGeneralError(output.error);
+            } else {
+                outputEditor.setValue(output);
+            }
         };
 
         document.getElementById('generate-btn').addEventListener('click', generate);
