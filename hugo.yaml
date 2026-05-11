@@ -14,6 +14,11 @@ module:
       disable: false
     - path: github.com/gohugoio/hugo-mod-bootstrap-scss/v5
       disable: false
+  mounts:
+    - source: assets
+      target: assets
+    - source: examples
+      target: assets/examples
 params:
   google_fonts: [["Inter", "300, 400, 600, 700"], ["Fira Code", "500, 700"]]
 

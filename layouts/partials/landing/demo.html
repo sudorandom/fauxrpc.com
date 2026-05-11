@@ -303,55 +303,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/javascript/javascript.min.js"></script>
 
 <script>
-    const defaultProto = `syntax = "proto3";
-
-package examples.demo;
-
-import "google/api/annotations.proto";
-import "buf/validate/validate.proto";
-import "google/protobuf/timestamp.proto";
-import "google/protobuf/duration.proto";
-import "google/protobuf/struct.proto";
-
-service DemoService {
-  rpc GetItem(GetItemRequest) returns (GetItemResponse) {
-    option (google.api.http) = {
-      get: "/v1/items/{id}"
-    };
-  }
-}
-
-message GetItemRequest {
-  string id = 1 [(buf.validate.field).string.uuid = true];
-}
-
-message GetItemResponse {
-  string name = 1 [(buf.validate.field).string.min_len = 3];
-  int32 quantity = 2 [(buf.validate.field).int32.gt = 0];
-  ItemType type = 3;
-  repeated string tags = 4 [
-    (buf.validate.field).repeated.min_items = 1,
-    (buf.validate.field).repeated.items.string.pattern = "^[a-z][a-z_]+[a-z]$"
-  ];
-
-  map<string, string> attributes = 5;
-
-  google.protobuf.Timestamp created_at = 6;
-  google.protobuf.Duration duration = 7;
-  google.protobuf.Struct extra_info = 8;
-
-  oneof status {
-    string status_message = 9;
-    int32 status_code = 10;
-  }
-}
-
-enum ItemType {
-  ITEM_TYPE_UNSPECIFIED = 0;
-  ITEM_TYPE_PHYSICAL = 1;
-  ITEM_TYPE_DIGITAL = 2;
-}
-`;
+    const defaultProto = `{{ (resources.Get "examples/demo/demo.proto").Content }}`;
 
     document.addEventListener('DOMContentLoaded', async () => {
         const getEditorTheme = () => {
