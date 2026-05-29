@@ -12,6 +12,10 @@ service DemoService {
   rpc GetItem(GetItemRequest) returns (GetItemResponse) {
     option (google.api.http) = {get: "/v1/items/{id}"};
   }
+
+  rpc GetContactProfile(GetContactProfileRequest) returns (ContactProfile) {
+    option (google.api.http) = {get: "/v1/contacts/{user_id}"};
+  }
 }
 
 message GetItemRequest {
@@ -55,4 +59,32 @@ enum ItemType {
   ITEM_TYPE_UNSPECIFIED = 0;
   ITEM_TYPE_PHYSICAL = 1;
   ITEM_TYPE_DIGITAL = 2;
+}
+
+message GetContactProfileRequest {
+  string user_id = 1 [(buf.validate.field).string.uuid = true];
+}
+
+message ContactProfile {
+  // Identification
+  string user_id = 1;
+
+  // Name
+  string full_name = 2;
+
+  // Contact Info
+  string email_address = 3;
+  string phone_number = 4;
+
+  // Address Info
+  string city = 5;
+  string country = 6;
+
+  // System & Network Info
+  string client_ip = 7;
+  string user_agent = 8;
+
+  // Work Info
+  string company_name = 9;
+  string job_title = 10;
 }

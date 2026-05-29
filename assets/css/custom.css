@@ -257,9 +257,6 @@ html[data-dark-mode] .docs-toc {
     list-style: none !important;
 }
 
-html[data-dark-mode] .card:hover {
-    background-color: #334155 !important;
-}
 
 /* Contrast and pop for screenshots/images in content */
 #content img,
