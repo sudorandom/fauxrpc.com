@@ -1,5 +1,5 @@
 ---
-title: 'fauxrpc generate'
+title: 'Generate Data'
 weight: 50
 slug: fauxrpc-generate
 description: "A guide to the `fauxrpc generate` command, which allows you to generate fake data for your Protobuf message types."

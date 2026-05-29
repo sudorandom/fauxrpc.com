@@ -1,6 +1,6 @@
 ---
 title: "Faking Data"
-weight: 50
+weight: 52
 slug: faking-data
 description: "Understand how FauxRPC generates fake data for your protobuf messages and how to improve it with protovalidate."
 icon: "auto_awesome"

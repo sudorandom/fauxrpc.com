@@ -23,6 +23,11 @@
         {{- $style = $style | minify | fingerprint "sha384" }}
     {{- end -}}
     <link rel="stylesheet" href="{{ $style.RelPermalink }}" {{ if hugo.IsProduction }}integrity="{{ $style.Data.Integrity }}"{{ end -}}/>
+    {{- $custom := resources.Get "/css/custom.css" }}
+    {{- if hugo.IsProduction }}
+        {{- $custom = $custom | minify | fingerprint "sha384" }}
+    {{- end -}}
+    <link rel="stylesheet" href="{{ $custom.RelPermalink }}" {{ if hugo.IsProduction }}integrity="{{ $custom.Data.Integrity }}"{{ end -}}/>
     <!-- Bootstrap JS -->
     {{ $js := resources.Get "js/bootstrap.js" }}
     {{ $params := dict }}

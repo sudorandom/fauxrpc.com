@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%">
+    <defs>
+        <!-- Core Gradients (Cyan/Blue) -->
+        <linearGradient id="core-top" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#00f2fe" />
+            <stop offset="100%" stop-color="#0ea5e9" />
+        </linearGradient>
+        <linearGradient id="core-left" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#0ea5e9" />
+            <stop offset="100%" stop-color="#0369a1" />
+        </linearGradient>
+        <linearGradient id="core-right" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" stop-color="#38bdf8" />
+            <stop offset="100%" stop-color="#075985" />
+        </linearGradient>
+
+        <!-- Wireframe Gradient (Neon Violet/Pink) -->
+        <linearGradient id="wire-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#a855f7" />
+            <stop offset="100%" stop-color="#ec4899" />
+        </linearGradient>
+
+        <filter id="glow-core" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="4" result="blur1" />
+            <feGaussianBlur stdDeviation="2" result="blur2" />
+            <feMerge>
+                <feMergeNode in="blur1" />
+                <feMergeNode in="blur2" />
+                <feMergeNode in="SourceGraphic" />
+            </feMerge>
+        </filter>
+
+        <filter id="glow-wire" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="2.5" result="blur" />
+            <feMerge>
+                <feMergeNode in="blur" />
+                <feMergeNode in="SourceGraphic" />
+            </feMerge>
+        </filter>
+    </defs>
+
+    <!-- Outer Wireframe Box (Faux Container) -->
+    <g fill="none" stroke="url(#wire-grad)" stroke-width="2.5" filter="url(#glow-wire)" stroke-linecap="round" stroke-linejoin="round">
+        <!-- Hidden Back Edges (lower opacity for depth) -->
+        <g stroke-opacity="0.3" stroke-dasharray="4, 4">
+            <path d="M 60,60 L 60,20" />
+            <path d="M 60,60 L 25,80" />
+            <path d="M 60,60 L 95,80" />
+        </g>
+
+        <!-- Visible Front Edges -->
+        <g stroke-dasharray="6, 5">
+            <!-- Outer hexagon -->
+            <path d="M 60,20 L 95,40 L 95,80 L 60,100 L 25,80 L 25,40 Z" />
+            <!-- Front Y -->
+            <path d="M 60,60 L 25,40" />
+            <path d="M 60,60 L 95,40" />
+            <path d="M 60,60 L 60,100" />
+        </g>
+
+        <!-- Nodes at outer vertices -->
+        <g fill="#0f172a" stroke="url(#wire-grad)" stroke-width="2" stroke-dasharray="none">
+            <circle cx="60" cy="20" r="3" />
+            <circle cx="95" cy="40" r="3" />
+            <circle cx="95" cy="80" r="3" />
+            <circle cx="60" cy="100" r="3" />
+            <circle cx="25" cy="80" r="3" />
+            <circle cx="25" cy="40" r="3" />
+        </g>
+    </g>
+
+    <!-- Inner Solid Core (The Mocked Payload) -->
+    <g filter="url(#glow-core)">
+        <!-- Top Face -->
+        <path d="M 60,60 L 44,51 L 60,42 L 76,51 Z" fill="url(#core-top)" />
+        <!-- Left Face -->
+        <path d="M 60,60 L 44,51 L 44,69 L 60,78 Z" fill="url(#core-left)" />
+        <!-- Right Face -->
+        <path d="M 60,60 L 76,51 L 76,69 L 60,78 Z" fill="url(#core-right)" />
+    </g>
+
+    <!-- Sharp white highlights on the core edges to make it pop -->
+    <g>
+        <!-- Front Y-junction -->
+        <path d="M 60,60 L 60,78" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.5" />
+        <path d="M 60,60 L 44,51" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.9" />
+        <path d="M 60,60 L 76,51" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.7" />
+        
+        <!-- Outer top edges -->
+        <path d="M 44,51 L 60,42 L 76,51" stroke="#ffffff" stroke-width="1.5" stroke-linejoin="round" fill="none" opacity="0.8" />
+    </g>
+
+    <!-- Data packets (Glowing Cyan dots simulating RPC traffic) -->
+    <g fill="#00f2fe" filter="url(#glow-core)">
+        <circle cx="77.5" cy="30" r="2.5" />
+        <circle cx="42.5" cy="70" r="2.5" />
+        <circle cx="77.5" cy="70" r="2.5" />
+    </g>
+</svg>
