@@ -18,4 +18,10 @@ FauxRPC lets you easily create fake gRPC, gRPC-Web, Connect, and REST servers fr
 
 FauxRPC allows you to send it protobuf descriptors and it will mimic the services contained within those descriptors. This allows you to set up fairly complex scenarios dynamically. This is all powered by an incredibly [simple gRPC service](https://github.com/sudorandom/fauxrpc/blob/main/proto/registry/v1/registry_service.proto) and easy to use with FauxRPC with the CLI.
 
-See the documentation on [fauxrpc registry](/docs/server/fauxrpc-registry) and [fauxrpc stubs](/docs/server/fauxrpc-registry/) for more.
+See the documentation on [Manage Registry](/docs/server/fauxrpc-registry/) and [Manage Stubs via CLI](/docs/server/fauxrpc-stub/) for more.
+
+## Upstream Proxying & Recording
+
+FauxRPC can act as an intercepting proxy between your client and an upstream server. It forwards requests, intercepts `UNIMPLEMENTED` errors to serve mocks or fakes, and can record all passing traffic to structured JSON stub files for offline replay.
+
+See the documentation on [Proxy & Record](/docs/server/proxy-and-record/) for more.

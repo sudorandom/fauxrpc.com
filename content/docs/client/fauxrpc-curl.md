@@ -1,5 +1,5 @@
 ---
-title: 'fauxrpc curl'
+title: 'Client CLI (Curl)'
 weight: 40
 slug: fauxrpc-curl
 description: "Learn how to use the `fauxrpc curl` command to send requests with dynamically generated fake data to any gRPC, gRPC-Web, or ConnectRPC service."
@@ -55,7 +55,7 @@ Here is a comprehensive list of all the flags available for the `fauxrpc curl` c
 
 ## Practical Examples
 
-### 1. Test All Methods in a Service
+### Test All Methods
 This command uses a remote schema from the Buf Schema Registry to discover all available RPCs and sends a request with fake data to each one. This is a great way to perform a quick smoke test on an entire service.
 
 ```shell
@@ -64,7 +64,7 @@ fauxrpc curl \
   --schema=buf.build/bufbuild/registry
 ```
 
-### Call a Specific RPC Method
+### Specific Method
 
 To target a single method, simply provide its fully qualified name as an argument after the flags.
 
@@ -75,7 +75,7 @@ fauxrpc curl \
   buf.registry.plugin.v1beta1.LabelService/ListLabels
 ```
 
-### Use Server Reflection
+### Server Reflection
 
 If the target server has reflection enabled, you don't need to provide a --schema. fauxrpc curl will automatically query the server to determine how to construct the request.
 
@@ -86,7 +86,7 @@ fauxrpc curl \
   buf.registry.plugin.v1beta1.LabelService/ListLabels
 ```
 
-### Target a gRPC-Web Service
+### Target gRPC-Web
 
 You can easily switch protocols to test different server implementations, like a gRPC-Web service that uses JSON encoding.
 
@@ -98,7 +98,7 @@ fauxrpc curl \
   my.webapp.v1.AuthService/Login
 ```
 
-### Use Stubs for Request Generation
+### Use Stubs
 
 You can provide stub definitions to control the data sent in the request. This is useful for testing specific scenarios or ensuring consistent request data.
 
@@ -118,7 +118,7 @@ stubs:
       sentence: "Hello from stubs!"
 ```
 
-### Streaming Requests
+### Streaming
 
 `fauxrpc curl` supports streaming requests. If the method accepts a stream, `fauxrpc curl` will send multiple messages. You can control this behavior using stubs with the `stream` configuration to define the sequence of messages to send.
 

@@ -1,5 +1,5 @@
 ---
-title: 'fauxrpc run'
+title: 'Run Server'
 weight: 40
 slug: fauxrpc-run
 description: "A comprehensive guide to the `fauxrpc run` command and all its flags for starting a fake gRPC server."
@@ -35,6 +35,8 @@ Flags:
       --only-stubs               Only use pre-defined stubs and don't make up fake data.
       --stubs=STUBS,...          Directories or file paths for JSON files.
       --dashboard                Enable the admin dashboard.
+      --proxy-to=STRING          Upstream gRPC or Connect server address to proxy requests to.
+      --record-dir=STRING        Directory where recorded stubs should be saved.
 ```
 
 ## Flags
@@ -48,6 +50,9 @@ Here is a comprehensive list of all the flags available for the `fauxrpc run` co
 | `--stubs=...` | `(none)` | A path to a directory or specific JSON files containing predefined responses. Use this to serve specific, static data for certain RPC calls. |
 | `--only-stubs` | `false` | If enabled, the server will **only** respond with data from loaded stubs. RPC calls without a matching stub will return an error instead of dynamically generated fake data. |
 | `--empty` | `false` | Allows the server to start without any services loaded from a schema. Useful for starting a base server that might be configured dynamically. |
+| **Proxying & Recording** |
+| `--proxy-to=...` | `(none)` | 🔄 The network address of the upstream gRPC or Connect server to forward requests to. |
+| `--record-dir=...` | `(none)` | 🎙️ The local directory path where recorded stubs should be saved, structured by service and method. |
 | **Network & Security** |
 | `-a, --addr` | `127.0.0.1:6660` | The network address and port for the server to bind to (e.g., `:8080` or `0.0.0.0:9000`). |
 | `--https` | `false` | 🛡️ Enables HTTPS. Requires `--cert` and `--cert-key` to be provided. |
@@ -78,14 +83,15 @@ FauxRPC has two primary modes for generating responses:
 
 ## Practical Examples
 
-### Basic Server from a Protobuf Descriptor
+### From Protobuf Descriptor
+
 This is the most common use case. It starts a server using a binary Protobuf descriptor file (`.binpb`).
 
 ```bash
 fauxrpc run --schema=./my-service.binpb
 ```
 
-### Mirroring a Live Server via Reflection
+### Live Reflection
 
 Start a server that mimics a remote gRPC server by connecting to it and using its reflection API to discover services.
 
@@ -93,7 +99,7 @@ Start a server that mimics a remote gRPC server by connecting to it and using it
 fauxrpc run --schema=grpc.server.com:443
 ```
 
-### Combining Multiple Schema Sources
+### Multiple Schemas
 
 You can load services from multiple sources, such as a local file and a remote server, into a single FauxRPC instance.
 
@@ -103,7 +109,7 @@ fauxrpc run \
   --schema=grpc.payments.com:443
 ```
 
-### Serving Predefined Responses from Stubs
+### Predefined Stubs
 
 Start a server that uses your schema but serves predictable data from a directory of JSON stub files for specific RPCs.
 
@@ -113,7 +119,28 @@ fauxrpc run \
   --stubs=./testdata/stubs/
 ```
 
-### Enabling the Admin Dashboard
+### Upstream Proxying
+
+Run the server as an intercepting proxy that forwards requests to an upstream server, falling back to dynamic fake data or stubs for unimplemented endpoints:
+
+```bash
+fauxrpc run \
+  --schema=buf.build/connectrpc/eliza \
+  --proxy-to=127.0.0.1:8080
+```
+
+### Stub Recording
+
+Run in proxy mode and record all passing traffic as structured JSON stubs into a local directory:
+
+```bash
+fauxrpc run \
+  --schema=buf.build/connectrpc/eliza \
+  --proxy-to=127.0.0.1:8080 \
+  --record-dir=./testdata/stubs/
+```
+
+### Admin Dashboard
 
 Run the server and enable the web dashboard, which is great for inspecting services and seeing traffic.
 ```bash
@@ -122,7 +149,7 @@ fauxrpc run \
   --dashboard
 ```
 
-### Running a Secure Server with HTTPS
+### Secure Server (HTTPS)
 
 To run a server on a custom port with TLS enabled, you must provide a certificate and key.
 
@@ -135,7 +162,7 @@ fauxrpc run \
   --schema=./my-service.binpb
 ```
 
-### Running a Lean Server with a Custom Address
+### Custom Lean Server
 
 This example starts a minimal server with reflection and the doc page disabled, listening on all network interfaces.
 

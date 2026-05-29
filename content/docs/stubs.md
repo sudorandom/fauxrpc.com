@@ -277,6 +277,22 @@ When multiple stubs match a request, FauxRPC uses the `priority` field to determ
 
 This allows you to define default responses with lower priority and more specific responses with higher priority.
 
+### Recording Stubs from Upstream Traffic
+
+Instead of writing YAML/JSON stub files by hand or adding them one-by-one via the CLI, you can automatically record real traffic passing through FauxRPC when it is run in proxy mode.
+
+By starting the server with `--proxy-to` and `--record-dir`, gRPC/Connect requests and responses are captured and saved to disk in the structured stub format. See the [Proxy & Record](/docs/server/proxy-and-record/) guide for detailed information.
+
+### Replaying Recorded Stubs
+
+Once stubs are recorded in a directory, you can load them back into FauxRPC offline:
+
+```shell
+fauxrpc run \
+  --schema=buf.build/connectrpc/eliza \
+  --stubs=stubs/
+```
+
 ### Conclusion
 
 FauxRPC stubs provide a powerful mechanism for controlling API responses, enabling you to simulate various scenarios, test edge cases, and develop against your APIs without a real backend. By combining static responses, dynamic CEL expressions, and priority management, you can achieve fine-grained control over your mock services and streamline your development workflow.

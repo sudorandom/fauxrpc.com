@@ -40,7 +40,7 @@ resp, err := elizaClient.Say(ctx, connect.NewRequest(&elizav1.SayRequest{
 // ... error handling and assertions ...
 ```
 
-This code is getting base URL of the FauxRPC server running in the container and creating a gRPC client (using ConnectRPC). ConnectRPC isn't a requirement. You can use grpc-go instead. With this client, you can make calls to your gRPC service as you would in a real environment. In this setup, FauxRPC automatically generates responses based on your Protobuf definitions. Here you would normally have some application logic that you want to test so this code might live elsewhere. The randomly generated data might work in a few scenarios but in order to test
+This code gets the base URL of the FauxRPC server running in the container and creates a gRPC client (using ConnectRPC). ConnectRPC isn't a requirement; you can use `grpc-go` instead. With this client, you can make calls to your gRPC service as you would in a real environment. In this setup, FauxRPC automatically generates responses based on your Protobuf definitions. Here, you would normally have some application logic that you want to test, so this code might live elsewhere. The randomly generated data might work in a few basic scenarios, but in order to test specific edge cases, we need deterministic responses.
 
 ### 4. Defining Stub Responses
 For more control over the responses you can define stubs. This allows you to simulate specific scenarios and test how your client handles different responses.

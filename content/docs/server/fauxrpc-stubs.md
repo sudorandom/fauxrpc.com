@@ -1,5 +1,5 @@
 ---
-title: 'fauxrpc stub'
+title: 'Manage Stubs via CLI'
 weight: 50
 slug: fauxrpc-stub
 description: "Learn how to use the `fauxrpc stub` command to define specific, static responses for your RPC calls."

@@ -1,5 +1,5 @@
 ---
-title: 'fauxrpc registry'
+title: 'Manage Registry'
 weight: 50
 slug: fauxrpc-registry
 description: "Understand how to manage the schema registry in FauxRPC, including adding and removing protobuf descriptors at runtime."
