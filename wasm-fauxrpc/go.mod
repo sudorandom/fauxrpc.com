@@ -7,12 +7,10 @@ require (
 	github.com/brianvoe/gofakeit/v7 v7.15.0
 	github.com/bufbuild/protocompile v0.14.1
 	github.com/getkin/kin-openapi v0.143.0
-	github.com/sudorandom/fauxrpc v0.20.1
+	github.com/sudorandom/fauxrpc v0.25.0
 	google.golang.org/genproto/googleapis/api v0.0.0-20260706201446-f0a921348800
 	google.golang.org/protobuf v1.36.11
 )
-
-replace github.com/sudorandom/fauxrpc => ../..
 
 require (
 	buf.build/gen/go/bufbuild/registry/connectrpc/go v1.20.0-20260713175918-10d915f5b43b.1 // indirect
