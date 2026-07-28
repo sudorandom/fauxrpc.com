@@ -11,7 +11,7 @@ hero:
       mobile: "gradient-mobile.webp"
 
   title: "FauxRPC"
-  subtitle: FauxRPC is a powerful tool that empowers you to accelerate development and testing by effortlessly generating fake implementations of gRPC, gRPC-Web, Connect, and REST services. If you have a protobuf-based workflow, this tool could help.
+  subtitle: Generate working fake services from OpenAPI and Protobuf schemas, including HTTP/REST, gRPC, gRPC-Web, and Connect.
 
   ctaButton:
     icon: rocket_launch
@@ -37,7 +37,7 @@ featureGrid:
   template: feature grid
 
   title: Why choose FauxRPC?
-  subtitle: FauxRPC is a powerful tool that empowers you to accelerate development and testing by effortlessly generating fake implementations of gRPC, gRPC-Web, Connect, and REST services. If you have a protobuf-based workflow, this tool could help.
+  subtitle: Generate schema-aware mock APIs without writing a backend implementation.
 
   items:
     - title: Accelerate Development
@@ -50,7 +50,11 @@ featureGrid:
 
     - title: Realistic Data Mocking
       icon: auto_awesome
-      description: Generate realistic fake data that automatically respects your protovalidate constraints.
+      description: Generate OpenAPI response bodies and headers or Protobuf messages that respect schema constraints.
+
+    - title: OpenAPI Support
+      icon: api
+      description: Serve HTTP operations, validate requests, load conditional stubs, and browse interactive API documentation.
 
     - title: Flexible and Extensible
       icon: settings_ethernet
@@ -99,10 +103,12 @@ dynamicDataFeature:
   weight: 40
   template: image text
   title: Dynamic Data Generation
-  subtitle: FauxRPC automatically generates realistic fake data for your protobuf messages. This helps you build and test your applications without needing real backend data.
+  subtitle: FauxRPC generates schema-shaped OpenAPI responses and Protobuf messages without real backend data.
   list:
     - text: Automatically generated fake data for all fields.
       icon: auto_awesome
+    - text: Generate response headers declared by OpenAPI operations.
+      icon: http
     - text: Augments responses with protovalidate rules to ensure data integrity.
       icon: rule
     - text: Enforces protovalidate constraints in responses.
@@ -123,7 +129,7 @@ stubbingFeature:
   weight: 50
   template: image text
   title: Configurable Stubs
-  subtitle: Define custom responses for specific RPC calls. FauxRPC allows you to configure stubs with static data or load them dynamically from an API, giving you full control over your mock environment.
+  subtitle: Define custom responses for OpenAPI operations and Protobuf RPC calls, giving you control over specific test scenarios.
   list:
     - text: Define static data for predictable responses.
       icon: get_app
@@ -157,7 +163,7 @@ multiProtocolFeature:
       icon: "web"
     - text: Support for the [Connect](https://connectrpc.com/) protocol.
       icon: "sync_alt"
-    - text: REST support for traditional HTTP clients. Using [google.api.http annotations](https://grpc-ecosystem.github.io/grpc-gateway/docs/tutorials/adding_annotations/).
+    - text: Native OpenAPI HTTP operations and REST transcoding through [google.api.http annotations](https://grpc-ecosystem.github.io/grpc-gateway/docs/tutorials/adding_annotations/).
       icon: "http"
   image:
     path: "images"
@@ -174,10 +180,10 @@ dynamicSchemaFeature:
   enable: true
   weight: 70
   template: image text
-  title: Dynamic Schema Loading
-  subtitle: FauxRPC can load protobuf definitions from various sources, allowing for dynamic schema reconfiguration without restarting the server.
+  title: Flexible Schema Loading
+  subtitle: Load OpenAPI and Protobuf schemas from local and remote sources through one option.
   list:
-    - text: Load protobufs from local files or directories.
+    - text: Load OpenAPI YAML/JSON and Protobuf descriptors from files or directories.
       icon: "folder"
     - text: Fetch schemas using gRPC reflection for live services.
       icon: "sensors"

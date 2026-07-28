@@ -4,16 +4,26 @@ weight: 10
 slug: intro
 aliases:
   - "/docs/"
-description: "An introduction to FauxRPC, a powerful tool for generating fake implementations of gRPC, gRPC-Web, Connect, and REST services."
+description: "Generate fake OpenAPI, gRPC, gRPC-Web, Connect, and REST services from your API schemas."
 icon: "rocket_launch"
 ---
 
-**FauxRPC** is a powerful tool that empowers you to accelerate development and testing by effortlessly generating fake implementations of gRPC, gRPC-Web, Connect, and REST services. If you have a protobuf-based workflow, this tool could help.
+**FauxRPC** accelerates development and testing by generating fake implementations from OpenAPI and Protobuf schemas. It can serve OpenAPI HTTP operations together with gRPC, gRPC-Web, Connect, and transcoded REST services.
 
 ## How it Works
-FauxRPC leverages your Protobuf definitions to generate fake services that mimic the behavior of real ones. You can easily configure the fake data returned, allowing you to simulate various scenarios and edge cases. It takes in `*.proto` files or protobuf descriptors (in binpb, json, txtpb, yaml formats), then it automatically starts up a server that can speak gRPC/gRPC-Web/Connect and REST (as long as there are `google.api.http` annotations defined). Descriptors contain all of the information found in a set of `.proto` files. You can generate them with `protoc` or the `buf build` command.
+FauxRPC uses API schemas to route and validate requests, select matching stubs, and generate schema-shaped fallback responses. Pass OpenAPI YAML/JSON, Protobuf descriptors, reflection URLs, and Buf Schema Registry modules through the repeatable `--schema` option.
+
+For Protobuf, FauxRPC serves gRPC, gRPC-Web, Connect, and REST when `google.api.http` annotations are present. For OpenAPI, it serves the declared HTTP operations directly and provides interactive documentation.
 
 {{< img src="/images/diagrams/diagram.svg" width="800" />}}
+
+### OpenAPI quick start
+
+```shell
+fauxrpc run --schema=./openapi.yaml
+```
+
+Generated OpenAPI responses include schema-shaped bodies and declared response headers. Values vary between requests by default; add `--static-seed` for repeatable generated responses. See [OpenAPI Support](/docs/server/openapi/) for request validation, interactive documentation, and operation-based stubs.
 
 ### Basic Usage
 

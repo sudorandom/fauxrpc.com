@@ -16,14 +16,20 @@
                 </div>
                 <hr class="my-5 opacity-25">
                 <h2 class="h3 fw-bold text-body">Try FauxRPC in Your Browser</h2>
-                <p class="text-body-secondary">Edit the Protobuf definition below and see how FauxRPC generates realistic fake data.</p>
+                <p class="text-body-secondary">Edit the Protobuf or OpenAPI definition below and see how FauxRPC generates realistic fake data in real-time.</p>
             </div>
         </div>
         <div class="row g-4">
             <div class="col-lg-6">
                 <div class="card h-100 shadow-sm border-0 bg-body-tertiary">
                     <div class="card-header d-flex justify-content-between align-items-center bg-body-secondary border-0 py-3">
-                        <span class="fw-bold text-body">Protobuf Definition</span>
+                        <div class="d-flex align-items-center gap-2">
+                            <span id="schema-type-label" class="fw-bold text-body">Schema Definition</span>
+                            <select class="form-select form-select-sm border-0 shadow-none bg-body text-body fw-bold" id="format-select" autocomplete="off" style="width: auto;">
+                                <option value="proto" selected>examples/demo.proto</option>
+                                <option value="openapi">users.openapi.yaml</option>
+                            </select>
+                        </div>
                         <div id="compile-status" class="badge bg-success">Valid</div>
                     </div>
                     <div class="card-body p-0 position-relative">
@@ -34,7 +40,7 @@
             <div class="col-lg-6">
                 <div class="card h-100 shadow-sm border-0 bg-body-tertiary">
                     <div class="card-header d-flex justify-content-between align-items-center bg-body-secondary border-0 py-3">
-                        <span class="fw-bold text-body">FauxRPC Output (JSON)</span>
+                        <span id="output-title-label" class="fw-bold text-body">FauxRPC Output (JSON)</span>
                         <button id="generate-btn" class="btn btn-primary btn-sm px-3">
                             <i class="material-icons align-middle me-1">refresh</i> Generate
                         </button>
@@ -44,7 +50,7 @@
                     </div>
                     <div class="card-footer bg-body-secondary border-0 py-3">
                         <div class="input-group input-group-sm">
-                            <label class="input-group-text bg-body border-0 fw-bold text-body" for="message-select">Message</label>
+                            <label id="target-select-label" class="input-group-text bg-body border-0 fw-bold text-body" for="message-select">Message</label>
                             <select class="form-select border-0 shadow-none bg-body text-body" id="message-select">
                                 <option selected>Loading...</option>
                             </select>
@@ -81,6 +87,14 @@
         font-family: 'Fira Code', monospace;
         font-size: 14px;
         border: none;
+    }
+    .CodeMirror-linenumber {
+        color: #718096 !important;
+        opacity: 0.8;
+    }
+    [data-dark-mode] .CodeMirror-linenumber {
+        color: #94a3b8 !important;
+        opacity: 0.95;
     }
     .error-line {
         background-color: rgba(220, 53, 69, 0.2);
@@ -232,15 +246,19 @@
 <!-- Using CodeMirror 5 for simplicity with CDN -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/protobuf/protobuf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/yaml/yaml.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/javascript/javascript.min.js"></script>
 
 <script>
     const defaultProto = `{{ (resources.Get "examples/demo/demo.proto").Content }}`;
+    const defaultOpenAPI = `{{ (resources.Get "examples/demo/demo.yaml").Content }}`;
 
     document.addEventListener('DOMContentLoaded', async () => {
         const getEditorTheme = () => {
             return document.documentElement.hasAttribute('data-dark-mode') ? 'nord' : 'default';
         };
+
+        let currentFormat = 'proto';
 
         const protoEditor = CodeMirror(document.getElementById('proto-editor'), {
             value: defaultProto,
@@ -271,10 +289,8 @@
         });
         observer.observe(document.documentElement, { attributes: true });
 
-        // Backup event listener for the mode switcher in case the global script is slow
         const toggleTheme = () => {
-            const isDark = document.documentElement.hasAttribute('data-dark-mode');
-            if (isDark) {
+            if (document.documentElement.hasAttribute('data-dark-mode')) {
                 document.documentElement.removeAttribute('data-dark-mode');
                 localStorage.setItem('theme', 'light');
             } else {
@@ -287,7 +303,6 @@
         if (modeBtn) {
             modeBtn.addEventListener('click', toggleTheme);
         }
-
         const modeMobileBtn = document.getElementById('mode-mobile');
         if (modeMobileBtn) {
             modeMobileBtn.addEventListener('click', (e) => {
@@ -296,17 +311,8 @@
             });
         }
 
-        // Define toggleMenu globally to fix ReferenceError
-        window.toggleMenu = function() {
-            document.getElementById('isToggle').classList.toggle('open');
-            var isOpen = document.getElementById('navigation')
-            if (isOpen.style.display === "block") {
-                isOpen.style.display = "none";
-            } else {
-                isOpen.style.display = "block";
-            }
-        };
-
+        const formatSelect = document.getElementById('format-select');
+        const targetSelectLabel = document.getElementById('target-select-label');
         const messageSelect = document.getElementById('message-select');
 
         const go = new Go();
@@ -324,16 +330,15 @@
         let currentFds = null;
         let lastErrorWidgets = [];
 
-        const updateMessageList = (fds) => {
-            const messages = listMessages(fds);
-            const currentSelected = messageSelect.value;
+        const updateTargetList = (items, isFormatSwitch) => {
+            const currentSelected = isFormatSwitch ? '' : messageSelect.value;
             messageSelect.innerHTML = '';
             
-            messages.forEach(msg => {
+            items.forEach(item => {
                 const opt = document.createElement('option');
-                opt.value = msg;
-                opt.textContent = msg;
-                if (msg === currentSelected || (currentSelected === 'Loading...' && msg.endsWith('Response'))) {
+                opt.value = item;
+                opt.textContent = item;
+                if (item === currentSelected || ((!currentSelected || currentSelected === 'Loading...') && (item.endsWith('GetItemResponse') || item.endsWith('Response') || item.startsWith('listUsers')))) {
                     opt.selected = true;
                 }
                 messageSelect.appendChild(opt);
@@ -344,13 +349,9 @@
             }
         };
 
-        const compileProto = () => {
-            const protoContent = protoEditor.getValue();
-            const files = {
-                "demo.proto": protoContent
-            };
+        const outputTitleLabel = document.getElementById('output-title-label');
 
-            // Clear previous errors
+        const clearErrors = () => {
             lastErrorWidgets.forEach(w => {
                 if (w.clear) w.clear();
             });
@@ -358,22 +359,37 @@
             document.getElementById('error-alert').classList.add('d-none');
             document.getElementById('compile-status').textContent = 'Valid';
             document.getElementById('compile-status').className = 'badge bg-success';
+        };
 
-            const result = parseProto(JSON.stringify(files));
-            if (result.error) {
-                showGeneralError(result.error);
-                return null;
+        const compileSchema = (isFormatSwitch) => {
+            clearErrors();
+            const content = protoEditor.getValue();
+
+            if (currentFormat === 'proto') {
+                const files = { "demo.proto": content };
+                const result = parseProto(JSON.stringify(files));
+                if (result.error) {
+                    showGeneralError(result.error);
+                    return null;
+                }
+                if (result.compilationErrors) {
+                    const errors = JSON.parse(result.compilationErrors);
+                    showCompilationErrors(errors);
+                    return null;
+                }
+                currentFds = result.fileDescriptorSet;
+                const messages = listMessages(currentFds);
+                updateTargetList(messages, isFormatSwitch);
+                return currentFds;
+            } else {
+                const result = parseOpenAPI(content);
+                if (result.error) {
+                    showGeneralError(result.error);
+                    return null;
+                }
+                updateTargetList(result.operations || [], isFormatSwitch);
+                return true;
             }
-
-            if (result.compilationErrors) {
-                const errors = JSON.parse(result.compilationErrors);
-                showCompilationErrors(errors);
-                return null;
-            }
-
-            currentFds = result.fileDescriptorSet;
-            updateMessageList(currentFds);
-            return currentFds;
         };
 
         const showGeneralError = (err) => {
@@ -402,28 +418,61 @@
         };
 
         const generate = () => {
-            if (!currentFds) {
-                if (!compileProto()) return;
-            }
+            if (currentFormat === 'proto') {
+                outputTitleLabel.textContent = 'FauxRPC Output (JSON)';
+                if (!currentFds && !compileSchema()) return;
+                const messageName = messageSelect.value;
+                if (!messageName) return;
 
-            const messageName = messageSelect.value;
-            if (!messageName) return;
-
-            const output = generateFakeData(messageName, currentFds);
-
-            if (output.error) {
-                showGeneralError(output.error);
+                const output = generateFakeData(messageName, currentFds);
+                if (output.error) {
+                    showGeneralError(output.error);
+                } else {
+                    outputEditor.setValue(output);
+                }
             } else {
-                outputEditor.setValue(output);
+                const operationTarget = messageSelect.value;
+                if (!operationTarget) return;
+
+                const output = generateOpenAPIFakeData(operationTarget);
+                if (output.error) {
+                    showGeneralError(output.error);
+                } else {
+                    const statusText = output.status ? `Response ${output.status} JSON` : 'Response JSON';
+                    outputTitleLabel.textContent = `FauxRPC Output (${statusText})`;
+                    outputEditor.setValue(output.payload || '{}');
+                }
             }
         };
+
+        const syncFormat = () => {
+            currentFormat = formatSelect.value;
+            if (currentFormat === 'proto') {
+                targetSelectLabel.textContent = 'Message';
+                protoEditor.setOption('mode', 'protobuf');
+                protoEditor.setValue(defaultProto);
+            } else {
+                targetSelectLabel.textContent = 'Operation';
+                protoEditor.setOption('mode', 'yaml');
+                protoEditor.setValue(defaultOpenAPI);
+            }
+        };
+
+        formatSelect.addEventListener('change', () => {
+            syncFormat();
+            compileSchema(true);
+            generate();
+        });
 
         document.getElementById('generate-btn').addEventListener('click', generate);
         messageSelect.addEventListener('change', generate);
 
+        // Always reset dropdown selection to Protobuf on load
+        formatSelect.value = 'proto';
+
         // Initial compilation and generation
         setTimeout(() => {
-            compileProto();
+            compileSchema();
             generate();
         }, 100);
 
@@ -431,7 +480,11 @@
         let debounceTimer;
         protoEditor.on('change', () => {
             clearTimeout(debounceTimer);
-            debounceTimer = setTimeout(compileProto, 500);
+            debounceTimer = setTimeout(() => {
+                if (compileSchema()) {
+                    generate();
+                }
+            }, 500);
         });
     });
 </script>

@@ -6,12 +6,17 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"sort"
 	"strings"
 	"syscall/js"
+	"time"
 
+	"github.com/brianvoe/gofakeit/v7"
 	"github.com/bufbuild/protocompile"
 	"github.com/bufbuild/protocompile/reporter"
+	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/sudorandom/fauxrpc"
+	"github.com/sudorandom/fauxrpc/private/openapi/generator"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/encoding/prototext"
 	"google.golang.org/protobuf/proto"
@@ -37,6 +42,9 @@ func main() {
 	js.Global().Set("generateFakeData", js.FuncOf(generateFakeData))
 	js.Global().Set("formatPrototext", js.FuncOf(formatPrototext))
 	js.Global().Set("listMessages", js.FuncOf(listMessages))
+	js.Global().Set("parseOpenAPI", js.FuncOf(parseOpenAPI))
+	js.Global().Set("generateOpenAPIFakeData", js.FuncOf(generateOpenAPIFakeData))
+	js.Global().Set("listOpenAPIOperations", js.FuncOf(listOpenAPIOperations))
 	select {}
 }
 
@@ -154,7 +162,9 @@ func generateFakeData(this js.Value, args []js.Value) any {
 		return js.ValueOf(map[string]any{"error": "descriptor is not a message: " + messageName})
 	}
 
-	msg, err := fauxrpc.NewMessage(messageDesc, fauxrpc.GenOptions{})
+	msg, err := fauxrpc.NewMessage(messageDesc, fauxrpc.GenOptions{
+		Faker: gofakeit.New(uint64(time.Now().UnixNano())),
+	})
 	if err != nil {
 		return js.ValueOf(map[string]any{"error": "failed to generate fake data: " + err.Error()})
 	}
@@ -281,4 +291,138 @@ func parseProto(this js.Value, args []js.Value) any {
 	js.CopyBytesToJS(uint8Array, bytes)
 
 	return js.ValueOf(map[string]any{"fileDescriptorSet": uint8Array})
+}
+
+var openapiDocCache *openapi3.T
+
+func parseOpenAPI(this js.Value, args []js.Value) any {
+	if len(args) < 1 {
+		return js.ValueOf(map[string]any{"error": "missing arguments: spec content"})
+	}
+
+	content := args[0].String()
+	loader := openapi3.NewLoader()
+	loader.IsExternalRefsAllowed = true
+
+	doc, err := loader.LoadFromData([]byte(content))
+	if err != nil {
+		return js.ValueOf(map[string]any{"error": "failed to parse openapi spec: " + err.Error()})
+	}
+
+	ctx := context.Background()
+	if err := doc.Validate(ctx); err != nil {
+		return js.ValueOf(map[string]any{"error": "invalid openapi spec: " + err.Error()})
+	}
+
+	openapiDocCache = doc
+
+	var ops []any
+	if doc.Paths != nil {
+		for path, item := range doc.Paths.Map() {
+			if item == nil {
+				continue
+			}
+			for method, op := range item.Operations() {
+				if op == nil {
+					continue
+				}
+				opID := op.OperationID
+				if opID == "" {
+					opID = fmt.Sprintf("%s %s", method, path)
+				} else {
+					opID = fmt.Sprintf("%s (%s %s)", opID, method, path)
+				}
+				ops = append(ops, opID)
+			}
+		}
+	}
+	sort.Slice(ops, func(i, j int) bool {
+		return fmt.Sprint(ops[i]) < fmt.Sprint(ops[j])
+	})
+
+	return js.ValueOf(map[string]any{"operations": ops})
+}
+
+func listOpenAPIOperations(this js.Value, args []js.Value) any {
+	if openapiDocCache == nil || openapiDocCache.Paths == nil {
+		return js.ValueOf([]any{})
+	}
+
+	var ops []any
+	for path, item := range openapiDocCache.Paths.Map() {
+		if item == nil {
+			continue
+		}
+		for method, op := range item.Operations() {
+			if op == nil {
+				continue
+			}
+			opID := op.OperationID
+			if opID == "" {
+				opID = fmt.Sprintf("%s %s", method, path)
+			} else {
+				opID = fmt.Sprintf("%s (%s %s)", opID, method, path)
+			}
+			ops = append(ops, opID)
+		}
+	}
+	sort.Slice(ops, func(i, j int) bool {
+		return fmt.Sprint(ops[i]) < fmt.Sprint(ops[j])
+	})
+
+	return js.ValueOf(ops)
+}
+
+func generateOpenAPIFakeData(this js.Value, args []js.Value) any {
+	if openapiDocCache == nil {
+		return js.ValueOf(map[string]any{"error": "no valid openapi spec loaded"})
+	}
+
+	if len(args) < 1 {
+		return js.ValueOf(map[string]any{"error": "missing argument: operationTarget"})
+	}
+
+	target := args[0].String()
+	walker := generator.NewWalker(false)
+
+	for path, item := range openapiDocCache.Paths.Map() {
+		if item == nil {
+			continue
+		}
+		for method, op := range item.Operations() {
+			if op == nil {
+				continue
+			}
+			opID := op.OperationID
+			opLabel := opID
+			if opLabel == "" {
+				opLabel = fmt.Sprintf("%s %s", method, path)
+			} else {
+				opLabel = fmt.Sprintf("%s (%s %s)", opID, method, path)
+			}
+
+			if target == opLabel || target == opID || target == fmt.Sprintf("%s %s", method, path) {
+				statusCode, headers, payload, err := walker.GenerateFromOperation(method, path, opID, op, 5)
+				if err != nil {
+					return js.ValueOf(map[string]any{"error": "failed to generate payload: " + err.Error()})
+				}
+
+				jsonBytes, err := json.MarshalIndent(payload, "", "  ")
+				if err != nil {
+					return js.ValueOf(map[string]any{"error": "failed to encode JSON: " + err.Error()})
+				}
+
+				resMap := map[string]any{
+					"status":  statusCode,
+					"payload": string(jsonBytes),
+				}
+				if len(headers) > 0 {
+					resMap["headers"] = headers
+				}
+				return js.ValueOf(resMap)
+			}
+		}
+	}
+
+	return js.ValueOf(map[string]any{"error": "operation not found: " + target})
 }
