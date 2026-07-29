@@ -12,7 +12,7 @@ layout: home
 
 ### Effortlessly start a fake service
 
-Define your protobuf file and start FauxRPC. Now you instantly have a working service to start integrating against! You can use tools like **[grpcurl](https://github.com/fullstorydev/grpcurl)**, **[buf curl](https://buf.build/docs/reference/cli/buf/curl/)** or even **[curl](https://curl.se/)**.
+Provide your OpenAPI or Protobuf schema and start FauxRPC. Now you instantly have a working service to start integrating against! You can use tools like **[grpcurl](https://github.com/fullstorydev/grpcurl)**, **[buf curl](https://buf.build/docs/reference/cli/buf/curl/)**, or **[curl](https://curl.se/)**.
 
 <div class="responsive-code-blocks">
   <div class="code-block-item">
