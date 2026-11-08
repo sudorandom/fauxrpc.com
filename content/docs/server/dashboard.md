@@ -2,41 +2,42 @@
 title: Dashboard
 ---
 
-Enhance your FauxRPC experience with the interactive dashboard, providing real-time insights into your server's operations.
+Inspect live multi-protocol traffic, registered stubs, and Protobuf schemas from the FauxRPC web dashboard.
 
-To enable the dashboard, simply start FauxRPC with the `--dashboard` option:
+Pass `--dashboard` to `fauxrpc run`:
 
 ```shell
 fauxrpc run --schema=service.binpb --dashboard
 ```
 
-Access the dashboard in your browser at `http://127.0.0.1:6660/fauxrpc`.
+Open `http://127.0.0.1:6660/fauxrpc` in your browser.
 
-### Summary
+### Live Telemetry & Overview
 
-The summary view provides a high-level overview of your FauxRPC server's activity. It displays key statistics, such as the number of requests received and the server's uptime, giving you a quick snapshot of its health and usage.
+The top application bar tracks real-time throughput, total requests, error rates, loaded services, active stubs, and server uptime. Expand the status popover to view runtime diagnostics or reset request counters.
 
-{{< img src="/images/dashboard.png" alt="FauxRPC Dashboard" width="800" />}}
+{{< img src="/images/dashboard.png" alt="FauxRPC Dashboard Overview and Telemetry" width="800" />}}
 
-### Request Log
+### Request Log & Inspector
 
-The request log offers a real-time, detailed stream of all incoming requests to your server. This is invaluable for debugging and understanding how clients are interacting with your services. You can inspect request headers and bodies, and see how FauxRPC is responding to each call.
+Incoming calls stream into the Request Log over Server-Sent Events as they arrive. Filter rows by service, method, payload text, status outcome (`OK` or `Errors`), or client protocol (`gRPC`, `gRPC-Web`, `Connect`, `HTTP`). Selecting any row opens the right-hand inspector with formatted request and response payloads, headers, matched stubs, and a generated YAML stub ready to copy, download, or register directly into the running server.
 
-{{< img src="/images/dashboard-request-log.png" alt="Request Log" width="800" />}}
+{{< img src="/images/dashboard-request-log.png" alt="Request Log and Payload Inspector" width="800" />}}
 
 ### Schema Browser
 
-With the schema browser, you can explore all the Protobuf schemas that are loaded into the FauxRPC server. This feature allows you to navigate through your services, methods, and message types, providing a clear and interactive way to understand your API's structure. For more details on defining inputs, refer to the [Inputs page](../inputs/).
+Navigate every registered Protobuf package and file in a split tree-and-source view. Each file entry displays service and message counts alongside syntax-highlighted `.proto` source reconstructed from the active descriptors. See the [Inputs page](../inputs/) for supported schema sources.
 
-{{< img src="/images/dashboard-schema1.png" alt="Schema Browser 1" width="800" />}}
-{{< img src="/images/dashboard-schema2.png" alt="Schema Browser 2" width="800" />}}
+{{< img src="/images/dashboard-schema1.png" alt="Schema Browser - Protobuf Service Definition" width="800" />}}
+{{< img src="/images/dashboard-schema2.png" alt="Schema Browser - REST Annotations" width="800" />}}
 
-### Stubs
+### Stubs Manager
 
-The stubs management interface lets you view and manage all the registered stubs in your FauxRPC server. You can see the details of each stub, including its matching criteria and the response it provides. This is essential for controlling the behavior of your mock server. Learn more about stubs on the [Stubs page](../stubs/).
+View, filter, create, and edit registered mock stubs in real time. The Stubs view displays each stub's mode (`CEL`, `JSON`, `ERROR`, `STREAM`), target service or method, `active_if` CEL rule, priority, and equivalent YAML configuration. Read the [Stubs page](../stubs/) for details on authoring rules.
 
-{{< img src="/images/dashboard-stubs.png" alt="Stubs" width="800" />}}
+{{< img src="/images/dashboard-stubs.png" alt="Stubs Inspector and Editor" width="800" />}}
 
 ### API Documentation
 
-FauxRPC automatically generates API documentation from your Protobuf schemas. The dashboard provides a convenient way to access this documentation, making it easy for developers to understand and use your APIs without needing to leave the browser. There are some who use FauxRPC exclusively because it makes displaying protobuf-based API documentations easy.
+FauxRPC generates interactive Protobuf service documentation (`/fauxrpc/docs`) and OpenAPI documentation (`/fauxrpc/openapi.html`) directly from loaded schemas. Both views are accessible from the top navigation bar.
+

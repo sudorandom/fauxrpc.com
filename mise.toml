@@ -4,3 +4,6 @@ buf = "1.69.0"
 hugo-extended = "0.161.1"
 just = "1.51.0"
 tinygo = "latest"
+uv = "latest"
+"go:github.com/sudorandom/fauxrpc/cmd/fauxrpc" = "latest"
+

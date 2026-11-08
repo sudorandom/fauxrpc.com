@@ -6,8 +6,8 @@
     <meta name="robots" content="noindex">
     {{- end }}
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="FauxRPC is a powerful tool that empowers you to accelerate development and testing by effortlessly generating fake implementations of gRPC, gRPC-Web, Connect, and REST services. If you have a protobuf-based workflow, this tool could help." />
-    <meta name="keywords" content="FauxRPC, gRPC, gRPC-Web, Connect, ConnectRPC, REST, Protobuf" />
+    <meta name="description" content="FauxRPC generates fake implementations of gRPC, gRPC-Web, Connect, and REST services from Protobuf and OpenAPI." />
+    <meta name="keywords" content="FauxRPC, gRPC, gRPC-Web, Connect, ConnectRPC, REST, Protobuf, OpenAPI" />
     <!-- favicon -->
     {{ block "head/favicon" . }}{{ partialCached "head/favicon.html" . }}{{ end }}
     <!-- Google Fonts -->
@@ -23,6 +23,10 @@
         {{- $style = $style | minify | fingerprint "sha384" }}
     {{- end -}}
     <link rel="stylesheet" href="{{ $style.RelPermalink }}" {{ if hugo.IsProduction }}integrity="{{ $style.Data.Integrity }}"{{ end -}}/>
+    {{- if .IsHome }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/theme/nord.min.css" />
+    {{- end }}
     {{- $custom := resources.Get "/css/custom.css" }}
     {{- if hugo.IsProduction }}
         {{- $custom = $custom | minify | fingerprint "sha384" }}
@@ -63,9 +67,13 @@
     {{- end -}}
     <!-- Dark Mode -->
     {{ if eq .Site.Params.docs.darkMode true -}}
+        <script>
+            if (localStorage.getItem('theme') === null) {
+                localStorage.setItem('theme', 'dark');
+                document.documentElement.setAttribute('data-dark-mode', '');
+            }
+        </script>
         {{ $darkModeInit := resources.Get "/docs/js/darkmode-init.js" | js.Build | minify -}}
         <script>{{ $darkModeInit.Content | safeJS }}</script>
-        {{ $darkModeSwitch := resources.Get "/docs/js/darkmode-switch.js" | js.Build | minify }}
-        <script>{{ $darkModeSwitch.Content | safeJS }}</script>
     {{ end -}}
 </head>

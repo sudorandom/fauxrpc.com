@@ -8,6 +8,8 @@ build-wasm:
 	else \
 		echo "Building WASM..."; \
 		rm -f static/fauxrpc.wasm; \
+		cp -f "$(go env GOROOT)/lib/wasm/wasm_exec.js" static/wasm_exec.js; \
+		chmod u+w static/wasm_exec.js; \
 		GOOS=js GOARCH=wasm go build -C wasm-fauxrpc -ldflags="-s -w" -o ../static/fauxrpc.wasm main.go; \
 		wasm-opt -Oz --all-features static/fauxrpc.wasm -o static/fauxrpc.wasm; \
 		gzip -9 -f static/fauxrpc.wasm; \
@@ -19,3 +21,7 @@ fmt:
 
 lint:
 	buf lint
+
+screenshots:
+	uv run scripts/screenshots.py
+

@@ -38,6 +38,12 @@
     {{- end }}
     <!-- Dark Mode -->
     {{ if eq .Site.Params.docs.darkMode true -}}
+        <script>
+            if (localStorage.getItem('theme') === null) {
+                localStorage.setItem('theme', 'dark');
+                document.documentElement.setAttribute('data-dark-mode', '');
+            }
+        </script>
         {{ $darkModeInit := resources.Get (printf "/%s/%s" ($.Scratch.Get "pathName") "js/darkmode-init.js") | js.Build | minify -}}
         <script>{{ $darkModeInit.Content | safeJS }}</script>
     {{ end -}}
