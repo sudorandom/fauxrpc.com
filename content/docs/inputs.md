@@ -5,11 +5,23 @@ slug: inputs
 aliases:
 - /docs/inputs/
 - /docs/server/inputs/
-description: "Learn about the versatile ways to provide input to FauxRPC, including Protobuf files, descriptor sets, server reflection, and the Buf Schema Registry."
+description: "Provide OpenAPI documents, Protobuf files, descriptor sets, server reflection endpoints, and Buf Schema Registry modules to FauxRPC."
 icon: "input"
 ---
 
-FauxRPC offers versatile ways to define the services it emulates. Whether you have Protobuf files, descriptor sets, a live gRPC server, or even Buf Schema Registry images, you can seamlessly provide the necessary input for FauxRPC to generate mock responses. This flexibility empowers you to test and develop against various scenarios without relying on actual backend implementations.
+FauxRPC uses one repeatable `--schema` option for OpenAPI documents, Protobuf descriptor sets, live gRPC reflection endpoints, and Buf Schema Registry modules. Different source types can be served together.
+
+## From OpenAPI documents
+
+OpenAPI 3 specifications can be loaded from YAML or JSON files:
+
+```shell
+$ fauxrpc run --schema=./openapi.yaml
+```
+
+HTTP(S) URLs and directories containing OpenAPI documents are also supported. FauxRPC detects the document type from its contents, serves its HTTP operations, and exposes interactive documentation at `/fauxrpc/openapi-docs/`.
+
+See [OpenAPI Support](/docs/server/openapi/) for response generation, request validation, stubs, and `--static-seed` behavior.
 
 ## From Protobuf files
 If you have `.proto` source files, you can use `buf` to build a descriptor set and then use it with FauxRPC.
@@ -75,9 +87,9 @@ This will start a fake version of the BSR API by downloading descriptors for [bu
 If you give FauxRPC a path to a [Buf Module](https://buf.build/docs/cli/modules-workspaces/), it will automatically generate descriptors and use those, seamlessly. Note that you must also have [the buf CLI](https://buf.build/product/cli) installed and available in the path.
 
 ## Multiple Sources
-You can define this `--schema` option as many times as you want. That means you can add services from multiple descriptors and even mix and match from descriptors and from server reflection:
+You can define `--schema` as many times as needed. OpenAPI and Protobuf sources can be mixed in one server:
 ```shell
-$ fauxrpc run --schema=https://demo.connectrpc.com --schema=./example.binpb
+$ fauxrpc run --schema=./openapi.yaml --schema=./example.binpb
 ```
 
 All the same inputs described above also work for [fauxrpc curl](/docs/client/fauxrpc-curl/).

@@ -6,10 +6,14 @@ description: "Learn how to use the FauxRPC server for testing and development."
 icon: "dns"
 ---
 
-FauxRPC is a handy tool that lets you quickly spin up a fake server that mimics a real gRPC server. This is super useful for testing and development when you don't have the actual backend service ready yet, or when you want to isolate your application from the real backend for focused testing.
+FauxRPC quickly spins up fake Protobuf and OpenAPI services. This is useful when the real backend is not ready or when a test needs an isolated, controllable implementation.
 
 ## Inputs
-FauxRPC allows you to easily mock gRPC servers using various inputs like Protobuf files, live gRPC servers, or Buf Schema Registry images. This makes it simple to test gRPC interactions without a real backend. See more on the [Inputs](/docs/server/inputs/) page.
+FauxRPC accepts OpenAPI YAML/JSON, Protobuf descriptor sets, live gRPC reflection endpoints, and Buf Schema Registry images through the same `--schema` option. See [Inputs](/docs/server/inputs/) for all supported sources.
+
+## OpenAPI Support
+
+Serve schema-aware HTTP operations, validate requests, generate bodies and response headers, load conditional stubs, and browse interactive API documentation. See [OpenAPI Support](/docs/server/openapi/) for a complete guide.
 
 ## Multiprotocol Support
 FauxRPC lets you easily create fake gRPC, gRPC-Web, Connect, and REST servers from different sources like Protobuf files, live gRPC servers, or Buf Schema Registry images. This allows you to test and develop your applications without needing a real backend. You can use tools like buf curl or grpcurl to interact with the fake server. See details on the [Multi-protocol Support](/docs/server/multi-protocol-support/) page.

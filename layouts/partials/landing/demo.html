@@ -34,9 +34,10 @@
                         <div class="faux-editor-card">
                             <div class="faux-editor-header">
                                 <div class="d-flex align-items-center gap-2">
-                                    <span class="faux-pane-title"><span class="d-none d-sm-inline">Protobuf </span>Schema</span>
+                                    <span class="faux-pane-title">Schema</span>
                                     <div class="faux-preset-group" role="group" aria-label="Schema examples">
-                                        <button type="button" class="faux-preset-btn active" aria-pressed="true" data-proto-preset="demo">Demo</button>
+                                        <button type="button" class="faux-preset-btn active" aria-pressed="true" data-proto-preset="demo">Protobuf</button>
+                                        <button type="button" class="faux-preset-btn" aria-pressed="false" data-proto-preset="openapi">OpenAPI</button>
                                         <button type="button" class="faux-preset-btn" aria-pressed="false" data-proto-preset="rest">REST</button>
                                         <button type="button" class="faux-preset-btn" aria-pressed="false" data-proto-preset="greet">Validate</button>
                                     </div>
@@ -44,7 +45,7 @@
                                 <span id="compile-status" class="faux-status-pill faux-status-ok" role="status" aria-live="polite">Valid</span>
                             </div>
                             <div class="faux-editor-body">
-                                <div id="proto-editor" aria-label="Protobuf schema editor"></div>
+                                <div id="proto-editor" aria-label="Schema editor"></div>
                             </div>
                         </div>
                     </div>
@@ -53,8 +54,8 @@
                         <div class="faux-editor-card">
                             <div class="faux-editor-header">
                                 <div class="d-flex align-items-center gap-2 flex-grow-1 min-w-0">
-                                    <label for="message-select" class="faux-pane-title mb-0 d-none d-sm-inline">Output</label>
-                                    <select id="message-select" class="faux-select" aria-label="Target Protobuf message">
+                                    <label for="message-select" id="target-select-label" class="faux-pane-title mb-0 d-none d-sm-inline">Output</label>
+                                    <select id="message-select" class="faux-select" aria-label="Target message or operation">
                                         <option value="examples.demo.ContactProfile" selected>examples.demo.ContactProfile</option>
                                         <option value="examples.demo.GetContactProfileRequest">examples.demo.GetContactProfileRequest</option>
                                         <option value="examples.demo.GetItemRequest">examples.demo.GetItemRequest</option>
@@ -133,7 +134,7 @@
                 <div class="col-lg-5">
                     <h2 class="faux-section-title">One server speaks gRPC, gRPC-Web, Connect, and REST.</h2>
                     <p class="faux-section-desc">
-                        Call the exact same mock service from backend gRPC clients, browser Connect or gRPC-Web apps, and standard HTTP/REST tools using <code>google.api.http</code> annotations.
+                        Call the exact same mock service from backend gRPC clients, browser Connect or gRPC-Web apps, and standard HTTP/REST tools using OpenAPI specs or <code>google.api.http</code> annotations.
                     </p>
                     <div class="faux-proto-strip mb-3">
                         <span class="faux-chip faux-chip-grpc">gRPC</span>
@@ -155,7 +156,7 @@
 <span class="faux-tok-prompt">$</span> <span class="faux-tok-cmd">buf curl</span> <span class="faux-tok-flag">--protocol=grpcweb</span> <span class="faux-tok-flag">--http2-prior-knowledge</span> \
     <span class="faux-tok-str">http://127.0.0.1:6660/examples.demo.DemoService/GetItem</span>
 
-<span class="faux-tok-comment"># Call transcoded google.api.http routes with curl</span>
+<span class="faux-tok-comment"># Call OpenAPI or transcoded google.api.http routes with curl</span>
 <span class="faux-tok-prompt">$</span> <span class="faux-tok-cmd">curl</span> <span class="faux-tok-str">http://127.0.0.1:6660/v1/items/550e8400-e29b-41d4-a716-446655440000</span></code></pre>
                     </div>
                 </div>
@@ -185,7 +186,7 @@
                 <div class="col-lg-5 order-lg-2 order-1">
                     <h2 class="faux-section-title">Pin specific responses with YAML and CEL rules.</h2>
                     <p class="faux-section-desc">
-                        Need deterministic responses or error states for tests? Write declarative stubs that match request fields with Common Expression Language (<code>active_if</code>), compute dynamic fields, or simulate gRPC error codes.
+                        Need deterministic responses or error states for tests? Write declarative stubs that match request fields with Common Expression Language (<code>active_if</code>), compute dynamic fields, or simulate gRPC and HTTP error codes.
                     </p>
                     <a href="/docs/stubs/" class="faux-inline-link">Learn about stubs →</a>
                 </div>
@@ -227,20 +228,33 @@
 <script src="/wasm_exec.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/codemirror.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/protobuf/protobuf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/yaml/yaml.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.13/mode/javascript/javascript.min.js"></script>
 
 <script>
     const protoPresets = {
         demo: {
-            preferredMessage: "examples.demo.ContactProfile",
+            format: "proto",
+            mode: "protobuf",
+            preferredTarget: "examples.demo.ContactProfile",
             content: `{{ (resources.Get "examples/demo/demo.proto").Content }}`
         },
+        openapi: {
+            format: "openapi",
+            mode: "yaml",
+            preferredTarget: "getUserById (GET /v1/users/{id})",
+            content: `{{ (resources.Get "examples/demo/demo.yaml").Content }}`
+        },
         rest: {
-            preferredMessage: "examples.rest.User",
+            format: "proto",
+            mode: "protobuf",
+            preferredTarget: "examples.rest.User",
             content: `{{ (resources.Get "examples/rest/users.proto").Content }}`
         },
         greet: {
-            preferredMessage: "examples.protovalidate.GreetResponse",
+            format: "proto",
+            mode: "protobuf",
+            preferredTarget: "examples.protovalidate.GreetResponse",
             content: `{{ (resources.Get "examples/protovalidate/greet.proto").Content }}`
         }
     };
@@ -355,21 +369,21 @@
         let currentFds = null;
         let lastErrorWidgets = [];
         let activePresetKey = 'demo';
+        let currentFormat = 'proto';
         let wasmReady = false;
         let userInteractedBeforeReady = false;
 
-        const updateMessageList = (fds, preferredMsg) => {
-            const messages = listMessages(fds);
-            const currentSelected = preferredMsg || messageSelect.value;
+        const updateTargetList = (items, preferredTarget) => {
+            const currentSelected = preferredTarget || messageSelect.value;
             messageSelect.innerHTML = '';
 
-            messages.forEach((msg) => {
+            items.forEach((item) => {
                 const opt = document.createElement('option');
-                opt.value = msg;
-                opt.textContent = msg;
+                opt.value = item;
+                opt.textContent = item;
                 if (
-                    msg === currentSelected ||
-                    (!preferredMsg && currentSelected === 'Loading...' && msg.endsWith('Response'))
+                    item === currentSelected ||
+                    (!preferredTarget && (item.endsWith('Response') || item.startsWith('getUserById')))
                 ) {
                     opt.selected = true;
                 }
@@ -406,11 +420,7 @@
             });
         };
 
-        const compileProto = (preferredMsg) => {
-            if (!wasmReady) return null;
-            const protoContent = protoEditor.getValue();
-            const files = { "demo.proto": protoContent };
-
+        const clearErrors = () => {
             lastErrorWidgets.forEach((w) => {
                 if (w.clear) w.clear();
             });
@@ -418,43 +428,70 @@
             document.getElementById('error-alert').classList.add('d-none');
             statusBadge.textContent = 'Valid';
             statusBadge.className = 'faux-status-pill faux-status-ok';
+        };
 
-            const result = parseProto(JSON.stringify(files));
-            if (result.error) {
-                showGeneralError(result.error);
-                return null;
+        const compileSchema = (preferredTarget) => {
+            if (!wasmReady) return null;
+            clearErrors();
+            const content = protoEditor.getValue();
+
+            if (currentFormat === 'proto') {
+                const files = { "demo.proto": content };
+                const result = parseProto(JSON.stringify(files));
+                if (result.error) {
+                    showGeneralError(result.error);
+                    return null;
+                }
+                if (result.compilationErrors) {
+                    const errors = JSON.parse(result.compilationErrors);
+                    showCompilationErrors(errors);
+                    return null;
+                }
+                currentFds = result.fileDescriptorSet;
+                const messages = listMessages(currentFds);
+                updateTargetList(messages, preferredTarget);
+                return currentFds;
+            } else {
+                const result = parseOpenAPI(content);
+                if (result.error) {
+                    showGeneralError(result.error);
+                    return null;
+                }
+                updateTargetList(result.operations || [], preferredTarget);
+                return true;
             }
+        };
 
-            if (result.compilationErrors) {
-                const errors = JSON.parse(result.compilationErrors);
-                showCompilationErrors(errors);
-                return null;
+        const flashOutput = () => {
+            const outEl = document.getElementById('output-editor');
+            if (outEl) {
+                outEl.classList.remove('faux-flash');
+                void outEl.offsetWidth;
+                outEl.classList.add('faux-flash');
             }
-
-            currentFds = result.fileDescriptorSet;
-            updateMessageList(currentFds, preferredMsg);
-            return currentFds;
         };
 
         const generate = () => {
             if (!wasmReady) return;
-            if (!currentFds) {
-                if (!compileProto()) return;
-            }
+            const target = messageSelect.value;
+            if (!target) return;
 
-            const messageName = messageSelect.value;
-            if (!messageName) return;
-
-            const output = generateFakeData(messageName, currentFds);
-            if (output.error) {
-                showGeneralError(output.error);
+            if (currentFormat === 'proto') {
+                if (!currentFds && !compileSchema()) return;
+                const output = generateFakeData(target, currentFds);
+                if (output.error) {
+                    showGeneralError(output.error);
+                } else {
+                    outputEditor.setValue(output);
+                    flashOutput();
+                }
             } else {
-                outputEditor.setValue(output);
-                const outEl = document.getElementById('output-editor');
-                if (outEl) {
-                    outEl.classList.remove('faux-flash');
-                    void outEl.offsetWidth;
-                    outEl.classList.add('faux-flash');
+                const output = generateOpenAPIFakeData(target);
+                if (output.error) {
+                    showGeneralError(output.error);
+                } else {
+                    outputEditor.setValue(output.payload || '{}');
+                    flashOutput();
                 }
             }
         };
@@ -465,14 +502,16 @@
                 const preset = protoPresets[key];
                 if (!preset) return;
                 activePresetKey = key;
+                currentFormat = preset.format;
                 document.querySelectorAll('[data-proto-preset]').forEach((b) => {
                     const isCurrent = b === btn;
                     b.classList.toggle('active', isCurrent);
                     b.setAttribute('aria-pressed', String(isCurrent));
                 });
+                protoEditor.setOption('mode', preset.mode);
                 protoEditor.setValue(preset.content);
                 if (wasmReady) {
-                    if (compileProto(preset.preferredMessage)) {
+                    if (compileSchema(preset.preferredTarget)) {
                         generate();
                     }
                 } else {
@@ -504,7 +543,7 @@
             }
             clearTimeout(debounceTimer);
             debounceTimer = setTimeout(() => {
-                if (compileProto()) {
+                if (compileSchema()) {
                     generate();
                 }
             }, 400);
@@ -522,7 +561,7 @@
             go.run(wasmResult.instance);
             wasmReady = true;
             setTimeout(() => {
-                if (compileProto(protoPresets[activePresetKey].preferredMessage) && userInteractedBeforeReady) {
+                if (compileSchema(protoPresets[activePresetKey].preferredTarget) && userInteractedBeforeReady) {
                     generate();
                 }
             }, 20);

@@ -5,15 +5,17 @@ slug: stubs
 aliases:
 - /docs/server/stubs/
 - /docs/stubs/
-description: "Define precise responses for your gRPC APIs using FauxRPC stubs, enabling comprehensive testing and development."
+description: "Define precise responses for Protobuf RPCs and OpenAPI operations using FauxRPC stubs."
 icon: "design_services"
 ---
 
-FauxRPC stubs allow you to define precise responses for your RPC calls. Stubs are supported by:
+FauxRPC stubs allow you to define precise responses for Protobuf RPC calls and OpenAPI operations. Stubs are supported by:
 
 *   **`fauxrpc run`**: The server will respond with the stubbed data when a matching request is received.
 *   **`fauxrpc curl`**: The client will use the stubbed data as the request payload.
 *   **`fauxrpc generate`**: The generator will output the stubbed data to stdout.
+
+OpenAPI stubs use operation, path, and HTTP request matching instead of the Protobuf fields described below. See [OpenAPI Stubs](/docs/server/openapi/#openapi-stubs) for their format and examples.
 
 ### Stub Configuration
 

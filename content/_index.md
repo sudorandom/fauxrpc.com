@@ -1,18 +1,18 @@
 ---
-title: FauxRPC - create a working mock gRPC server in minutes
+title: FauxRPC - create working mock APIs in minutes
 layout: home
 ---
 {{< fauxrpc_logo >}}
 
 ## Say Hello to FauxRPC
 
-> FauxRPC is a powerful tool that empowers you to accelerate development and testing by effortlessly generating fake implementations of gRPC, gRPC-Web, Connect, and REST services. If you have a protobuf-based workflow, this tool could help.
+> FauxRPC generates working fake services from OpenAPI and Protobuf schemas, including HTTP/REST, gRPC, gRPC-Web, and Connect.
 
 [Documentation](docs/intro/) | [Install](docs/install/)
 
 ### Effortlessly start a fake service
 
-Define your protobuf file and start FauxRPC. Now you instantly have a working service to start integrating against! You can use tools like **[grpcurl](https://github.com/fullstorydev/grpcurl)**, **[buf curl](https://buf.build/docs/reference/cli/buf/curl/)** or even **[curl](https://curl.se/)**.
+Provide your OpenAPI or Protobuf schema and start FauxRPC. Now you instantly have a working service to start integrating against! You can use tools like **[grpcurl](https://github.com/fullstorydev/grpcurl)**, **[buf curl](https://buf.build/docs/reference/cli/buf/curl/)**, or **[curl](https://curl.se/)**.
 
 <div class="responsive-code-blocks">
   <div class="code-block-item">
@@ -97,6 +97,7 @@ $ buf curl -d '{"name": "Kevin"}' --protocol=grpcweb --http2-prior-knowledge htt
 *   [**Faster Development & Testing**](docs/intro/): Work independently without relying on fully functional backend services.
 *   [**Interactive Dashboard**](docs/server/dashboard/): Gain real-time insights into your server's operations.
 *   [**Multi-Protocol Support**](/docs/server/multi-protocol-support/): Supports multiple protocols: gRPC, gRPC-Web, Connect, and REST.
+*   [**OpenAPI Support**](/docs/server/openapi/): Validate HTTP requests and generate schema-aware response bodies and headers.
 *   [**Prototyping & Demos**](docs/workflow/): Create prototypes and demos quickly without building the full backend. Fake it till you make it.
 *   [**Testcontainers support**](docs/testcontainers/): (go only) Superpower testing Go services by using FauxRPC with Testcontainers.
 *   [**Plays well with others**](/docs/protovalidate/): Test data from FauxRPC will try to automatically follow any **protovalidate** constraints that are defined.

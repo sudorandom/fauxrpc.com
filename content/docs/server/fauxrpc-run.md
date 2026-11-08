@@ -2,11 +2,11 @@
 title: 'Run Server'
 weight: 40
 slug: fauxrpc-run
-description: "A comprehensive guide to the `fauxrpc run` command and all its flags for starting a fake gRPC server."
+description: "A comprehensive guide to `fauxrpc run` and its flags for starting fake OpenAPI and Protobuf services."
 icon: "play_circle"
 ---
 
-The `fauxrpc run` command starts a fake gRPC server that you can use for testing and development without a real backend. Here's a breakdown of its options:
+The `fauxrpc run` command starts fake OpenAPI and Protobuf services for testing and development without a real backend.
 
 ## Flags
 
@@ -20,7 +20,7 @@ Flags:
   -l, --log-level="info"         Set the logging level (debug|info|warn|error)
       --version                  Print version information and quit
 
-      --schema=SCHEMA,...        The modules to use for the RPC schema. It can be protobuf descriptors (binpb, json, yaml), a URL for reflection or a directory of descriptors.
+      --schema=SCHEMA,...        The schemas to serve. It can be protobuf descriptors (binpb, json, yaml), an OpenAPI specification, a URL, or a directory of schemas.
   -a, --addr="127.0.0.1:6660"    Address to bind to.
       --no-reflection            Disables the server reflection service.
       --no-http-log              Disables the HTTP log.
@@ -35,21 +35,26 @@ Flags:
       --only-stubs               Only use pre-defined stubs and don't make up fake data.
       --stubs=STUBS,...          Directories or file paths for JSON files.
       --dashboard                Enable the admin dashboard.
+      --depth=5                  Max depth for generated messages.
+      --static-seed              Use deterministic generated values for unstubbed OpenAPI and Protobuf requests.
       --proxy-to=STRING          Upstream gRPC or Connect server address to proxy requests to.
       --record-dir=STRING        Directory where recorded stubs should be saved.
+      --ssl-keylog-file=STRING   Path to file for logging TLS secrets; requires HTTPS or HTTP3.
 ```
 
-## Flags
+## Flag reference
 
 Here is a comprehensive list of all the flags available for the `fauxrpc run` command.
 
 | Flag | Default | Description |
 | :--- | :--- | :--- |
 | **Schema & Data** |
-| `--schema=...` | `(none)` | **(Required)** 📜 Specifies the source for the RPC schema. It can be a local file path, a directory, or a URL. You can use this flag multiple times. See the [Inputs](/docs/server/inputs/) page for details. |
-| `--stubs=...` | `(none)` | A path to a directory or specific JSON files containing predefined responses. Use this to serve specific, static data for certain RPC calls. |
-| `--only-stubs` | `false` | If enabled, the server will **only** respond with data from loaded stubs. RPC calls without a matching stub will return an error instead of dynamically generated fake data. |
+| `--schema=...` | `(none)` | **(Required)** 📜 Specifies an OpenAPI or Protobuf schema source. It can be a local path, directory, or URL and may be repeated. See [Inputs](/docs/server/inputs/). |
+| `--stubs=...` | `(none)` | A YAML/JSON file or directory containing predefined Protobuf or OpenAPI responses. |
+| `--only-stubs` | `false` | Disables generated fallback data. Unstubbed OpenAPI operations return HTTP `501`; unstubbed Protobuf RPCs return an empty message. |
 | `--empty` | `false` | Allows the server to start without any services loaded from a schema. Useful for starting a base server that might be configured dynamically. |
+| `--depth` | `5` | Limits recursion depth when generating nested Protobuf messages and OpenAPI response schemas. |
+| `--static-seed` | `false` | Uses stable, identity-derived seeds for unstubbed OpenAPI operations and Protobuf RPC methods. Generated values vary per request when omitted. Explicit examples, defaults, and stubs are unaffected. |
 | **Proxying & Recording** |
 | `--proxy-to=...` | `(none)` | 🔄 The network address of the upstream gRPC or Connect server to forward requests to. |
 | `--record-dir=...` | `(none)` | 🎙️ The local directory path where recorded stubs should be saved, structured by service and method. |
@@ -77,7 +82,9 @@ FauxRPC has two primary modes for generating responses:
 
 1.  **Dynamic Faking (Default):** If you only provide a `--schema`, FauxRPC will dynamically generate a valid, randomized response for any RPC call it receives. This is perfect for general-purpose testing where you just need *some* valid data.
 
-2.  **Static Stubbing:** By using the `--stubs` flag, you can provide JSON files that define specific responses for specific RPC calls. This is ideal for integration tests or frontend development where you need predictable and consistent data to verify application logic. Using `--only-stubs` ensures that *only* your predefined stubs are used.
+2.  **Static Stubbing:** By using the `--stubs` flag, you can provide YAML or JSON files that define specific responses for RPC calls and OpenAPI operations. This is ideal for integration tests or frontend development where you need predictable and consistent data to verify application logic. `--only-stubs` disables generated fallback data for both schema types.
+
+Use `--static-seed` for deterministic generated responses without defining stubs. The option applies to both OpenAPI operations and Protobuf RPC methods.
 
 ---
 
@@ -89,6 +96,24 @@ This is the most common use case. It starts a server using a binary Protobuf des
 
 ```bash
 fauxrpc run --schema=./my-service.binpb
+```
+
+### From OpenAPI
+
+Start an HTTP mock server from an OpenAPI YAML or JSON document:
+
+```bash
+fauxrpc run --schema=./openapi.yaml
+```
+
+Interactive documentation is available at `http://127.0.0.1:6660/fauxrpc/openapi-docs/`. See [OpenAPI Support](/docs/server/openapi/) for generated responses and operation-based stubs.
+
+### Deterministic Generated Responses
+
+Keep generated values stable across repeated unstubbed calls:
+
+```bash
+fauxrpc run --schema=./openapi.yaml --static-seed
 ```
 
 ### Live Reflection
