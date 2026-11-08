@@ -27,65 +27,303 @@
                 </div>
             </div>
 
-            <!-- CLEAN TWO-PANE WASM PLAYGROUND -->
-            <div id="playground" class="faux-playground">
-                <div class="row g-4">
-                    <div class="col-lg-6">
-                        <div class="faux-editor-card">
-                            <div class="faux-editor-header">
-                                <div class="d-flex align-items-center gap-2">
-                                    <span class="faux-pane-title">Schema</span>
-                                    <div class="faux-preset-group" role="group" aria-label="Schema examples">
-                                        <button type="button" class="faux-preset-btn active" aria-pressed="true" data-proto-preset="demo">Protobuf</button>
-                                        <button type="button" class="faux-preset-btn" aria-pressed="false" data-proto-preset="openapi">OpenAPI</button>
-                                        <button type="button" class="faux-preset-btn" aria-pressed="false" data-proto-preset="rest">REST</button>
-                                        <button type="button" class="faux-preset-btn" aria-pressed="false" data-proto-preset="greet">Validate</button>
-                                    </div>
-                                </div>
-                                <span id="compile-status" class="faux-status-pill faux-status-ok" role="status" aria-live="polite">Valid</span>
-                            </div>
-                            <div class="faux-editor-body">
-                                <div id="proto-editor" aria-label="Schema editor"></div>
-                            </div>
-                        </div>
-                    </div>
+            <!-- ANIMATED REQUEST ROUTING VISUALIZATION -->
+            <div class="faux-flow-wrap mx-auto" id="faux-flow-diagram" data-scenario="stub" data-active-branch="stub">
+                <!-- Desktop Horizontal Diagram (>= 768px) -->
+                <svg class="faux-flow-svg faux-flow-svg-desktop" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 390" role="img" aria-label="Animated FauxRPC request flow showing requests arriving from the client, evaluating conditional stubs first, forwarding to the real upstream service second, falling back to schema-generated fake data when unimplemented, and returning the response to the client">
+                    <defs>
+                        <pattern id="faux-flow-grid" width="24" height="24" patternUnits="userSpaceOnUse">
+                            <circle cx="2" cy="2" r="1" class="faux-svg-grid-dot" />
+                        </pattern>
 
-                    <div class="col-lg-6">
-                        <div class="faux-editor-card">
-                            <div class="faux-editor-header">
-                                <div class="d-flex align-items-center gap-2 flex-grow-1 min-w-0">
-                                    <label for="message-select" id="target-select-label" class="faux-pane-title mb-0 d-none d-sm-inline">Output</label>
-                                    <select id="message-select" class="faux-select" aria-label="Target message or operation">
-                                        <option value="examples.demo.ContactProfile" selected>examples.demo.ContactProfile</option>
-                                        <option value="examples.demo.GetContactProfileRequest">examples.demo.GetContactProfileRequest</option>
-                                        <option value="examples.demo.GetItemRequest">examples.demo.GetItemRequest</option>
-                                        <option value="examples.demo.GetItemResponse">examples.demo.GetItemResponse</option>
-                                        <option value="examples.demo.Item">examples.demo.Item</option>
-                                        <option value="examples.demo.SearchItemsRequest">examples.demo.SearchItemsRequest</option>
-                                    </select>
-                                </div>
-                                <div class="d-flex align-items-center gap-2 flex-shrink-0">
-                                    <button type="button" id="copy-output-btn" class="faux-copy-btn" title="Copy generated JSON">
-                                        <span id="copy-output-label">Copy</span>
-                                    </button>
-                                    <button type="button" id="generate-btn" class="faux-generate-btn">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
-                                            <path d="M3 3v5h5"></path>
-                                            <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"></path>
-                                            <path d="M16 16h5v5"></path>
-                                        </svg>
-                                        <span>Generate</span>
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="faux-editor-body">
-                                <div id="output-editor" aria-label="Generated JSON output"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div id="error-alert" class="faux-error-banner d-none mt-3" role="alert"></div>
+                        <filter id="faux-core-glow" x="-20%" y="-20%" width="140%" height="140%">
+                            <feGaussianBlur stdDeviation="12" result="blur" />
+                            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                        </filter>
+
+                        <marker id="arrow-slate" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                            <path d="M 0 1 L 8 5 L 0 9 z" class="faux-svg-arrow-slate" />
+                        </marker>
+                        <marker id="arrow-violet" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                            <path d="M 0 1 L 8 5 L 0 9 z" class="faux-svg-arrow-violet" />
+                        </marker>
+                        <marker id="arrow-sky" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                            <path d="M 0 1 L 8 5 L 0 9 z" class="faux-svg-arrow-sky" />
+                        </marker>
+                        <marker id="arrow-emerald" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                            <path d="M 0 1 L 8 5 L 0 9 z" class="faux-svg-arrow-emerald" />
+                        </marker>
+                    </defs>
+
+                    <!-- Canvas Background -->
+                    <rect width="1000" height="390" rx="14" class="faux-svg-canvas" />
+                    <rect width="1000" height="390" rx="14" fill="url(#faux-flow-grid)" />
+                    <rect x="0.5" y="0.5" width="999" height="389" rx="13.5" fill="none" class="faux-svg-canvas-border" />
+
+                    <!-- ================= CLIENT <-> FAUXRPC LINES ================= -->
+                    <path data-flow-el="path-req" d="M 236 175 L 320 175" fill="none" class="faux-svg-conn faux-conn-req" marker-end="url(#arrow-slate)" />
+                    <text x="278" y="166" text-anchor="middle" class="faux-svg-mono faux-svg-edge-label" font-size="9.5">request</text>
+
+                    <path data-flow-el="path-res" d="M 326 215 L 242 215" fill="none" class="faux-svg-conn faux-conn-res" marker-end="url(#arrow-slate)" />
+                    <text x="284" y="231" text-anchor="middle" class="faux-svg-mono faux-svg-edge-label" font-size="9.5">response</text>
+
+                    <!-- ================= FAUXRPC <-> DESTINATION BRANCHES ================= -->
+                    <!-- Branch 1: Conditional Stubs (Top) -->
+                    <g class="faux-branch faux-branch-stub">
+                        <path data-flow-el="path-to-stub" d="M 520 165 C 575 165, 575 72, 634 72" fill="none" class="faux-svg-branch-base faux-svg-branch-violet" marker-end="url(#arrow-violet)" />
+                        <path data-flow-el="path-from-stub" d="M 640 72 C 575 72, 575 165, 520 165" fill="none" stroke="none" />
+                        <rect x="536" y="104" width="76" height="22" rx="11" class="faux-svg-pill faux-svg-pill-violet" />
+                        <text x="574" y="119" text-anchor="middle" class="faux-svg-mono faux-svg-pill-text-violet" font-size="10">1. stubs?</text>
+                    </g>
+
+                    <!-- Branch 2: Real Service Proxy (Middle) -->
+                    <g class="faux-branch faux-branch-proxy">
+                        <path data-flow-el="path-to-proxy" d="M 520 195 L 634 195" fill="none" class="faux-svg-branch-base faux-svg-branch-sky" marker-end="url(#arrow-sky)" />
+                        <path data-flow-el="path-from-proxy" d="M 640 195 L 520 195" fill="none" stroke="none" />
+                        <rect x="536" y="184" width="76" height="22" rx="11" class="faux-svg-pill faux-svg-pill-sky" />
+                        <text x="574" y="199" text-anchor="middle" class="faux-svg-mono faux-svg-pill-text-sky" font-size="10">2. proxy</text>
+                    </g>
+
+                    <!-- Branch 3: Fake Data Generation (Bottom) -->
+                    <g class="faux-branch faux-branch-fake">
+                        <path data-flow-el="path-to-fake" d="M 520 225 C 575 225, 575 318, 634 318" fill="none" class="faux-svg-branch-base faux-svg-branch-emerald" marker-end="url(#arrow-emerald)" />
+                        <path data-flow-el="path-from-fake" d="M 640 318 C 575 318, 575 225, 520 225" fill="none" stroke="none" />
+                        <rect x="529" y="262" width="90" height="22" rx="11" class="faux-svg-pill faux-svg-pill-emerald" />
+                        <text x="574" y="277" text-anchor="middle" class="faux-svg-mono faux-svg-pill-text-emerald" font-size="10">3. fallback</text>
+                    </g>
+
+                    <!-- ================= LEFT: CLIENT NODE ================= -->
+                    <g transform="translate(32, 127)">
+                        <rect width="204" height="136" rx="10" class="faux-svg-node" />
+                        <text x="102" y="28" text-anchor="middle" class="faux-svg-sans faux-svg-title" font-size="14.5" font-weight="600">Client</text>
+
+                        <!-- Outgoing Request Box -->
+                        <rect x="14" y="40" width="176" height="38" rx="6" class="faux-svg-well" />
+                        <text x="22" y="53" class="faux-svg-mono faux-svg-muted" font-size="8.5">OUTGOING CALL</text>
+                        <text data-flow-el="req-label" x="22" y="69" class="faux-svg-mono faux-svg-req-text" font-size="10.5">GetUser(id: "usr_vip")</text>
+
+                        <!-- Returned Response Box -->
+                        <rect data-flow-el="res-box" x="14" y="84" width="176" height="38" rx="6" class="faux-svg-well faux-client-res-well" />
+                        <text x="22" y="97" class="faux-svg-mono faux-svg-muted" font-size="8.5">RESPONSE RECEIVED</text>
+                        <text data-flow-el="res-label" x="22" y="113" class="faux-svg-mono faux-svg-res-text" font-size="10.5">awaiting response...</text>
+                    </g>
+
+                    <!-- ================= CENTER: FAUXRPC DECISION CORE ================= -->
+                    <g transform="translate(326, 113)">
+                        <rect width="194" height="164" rx="14" class="faux-svg-core-glow" filter="url(#faux-core-glow)" />
+                        <rect width="194" height="164" rx="14" class="faux-svg-core" />
+
+                        <!-- Dual Schema Input Pills (Protobuf + OpenAPI) -->
+                        <g transform="translate(21, -11)">
+                            <rect x="0" y="0" width="72" height="22" rx="11" class="faux-svg-schema-proto" />
+                            <text x="36" y="14.5" text-anchor="middle" class="faux-svg-mono faux-svg-schema-proto-text" font-size="10" font-weight="600">Protobuf</text>
+
+                            <rect x="80" y="0" width="72" height="22" rx="11" class="faux-svg-schema-openapi" />
+                            <text x="116" y="14.5" text-anchor="middle" class="faux-svg-mono faux-svg-schema-openapi-text" font-size="10" font-weight="600">OpenAPI</text>
+                        </g>
+
+                        <!-- Title -->
+                        <text x="97" y="42" text-anchor="middle" class="faux-svg-sans faux-svg-core-title" font-size="20" font-weight="700" letter-spacing="-0.02em">FauxRPC</text>
+
+                        <!-- Divider -->
+                        <line x1="18" y1="56" x2="176" y2="56" class="faux-svg-divider" />
+
+                        <!-- 3-Step Live Decision Checklist inside FauxRPC -->
+                        <g transform="translate(18, 68)">
+                            <rect data-flow-el="row-stub" x="0" y="0" width="158" height="24" rx="5" class="faux-core-step-row" data-step-kind="stub" />
+                            <circle cx="12" cy="12" r="4" class="faux-svg-dot-violet" />
+                            <text x="23" y="15.5" class="faux-svg-mono faux-core-step-name" font-size="10">1. Stubs</text>
+                            <text data-flow-el="status-stub" x="148" y="15.5" text-anchor="end" class="faux-svg-mono faux-core-step-status" font-size="9.5">—</text>
+
+                            <rect data-flow-el="row-proxy" x="0" y="30" width="158" height="24" rx="5" class="faux-core-step-row" data-step-kind="proxy" />
+                            <circle cx="12" cy="42" r="4" class="faux-svg-dot-sky" />
+                            <text x="23" y="45.5" class="faux-svg-mono faux-core-step-name" font-size="10">2. Proxy</text>
+                            <text data-flow-el="status-proxy" x="148" y="45.5" text-anchor="end" class="faux-svg-mono faux-core-step-status" font-size="9.5">—</text>
+
+                            <rect data-flow-el="row-fake" x="0" y="60" width="158" height="24" rx="5" class="faux-core-step-row" data-step-kind="fake" />
+                            <circle cx="12" cy="72" r="4" class="faux-svg-dot-emerald" />
+                            <text x="23" y="75.5" class="faux-svg-mono faux-core-step-name" font-size="10">3. Fake Data</text>
+                            <text data-flow-el="status-fake" x="148" y="75.5" text-anchor="end" class="faux-svg-mono faux-core-step-status" font-size="9.5">—</text>
+                        </g>
+                    </g>
+
+                    <!-- ================= RIGHT: 3 DESTINATION CARDS ================= -->
+                    <!-- 1. Conditional Stubs (Top) -->
+                    <g transform="translate(642, 24)" class="faux-dest-card faux-dest-stub" data-route-target="stub" role="button" tabindex="0" aria-label="Scenario 1: Conditional Stubs match">
+                        <rect width="326" height="96" rx="10" class="faux-svg-dest-box faux-svg-dest-violet" />
+                        <circle cx="22" cy="28" r="5" class="faux-svg-dot-violet" />
+                        <text x="36" y="33" class="faux-svg-sans faux-svg-title" font-size="14.5" font-weight="600">Conditional Stubs</text>
+                        <rect data-flow-el="badge-box-stub" x="210" y="16" width="98" height="22" rx="11" class="faux-dest-status-pill" data-badge-kind="stub" />
+                        <text data-flow-el="badge-text-stub" x="259" y="30.5" text-anchor="middle" class="faux-svg-mono faux-dest-status-text" font-size="9.5">CEL rule</text>
+
+                        <rect x="16" y="48" width="294" height="32" rx="6" class="faux-svg-well" />
+                        <text x="28" y="68" class="faux-svg-mono faux-svg-code-violet" font-size="11.5">when: req.id == "usr_vip" → 200 OK</text>
+                    </g>
+
+                    <!-- 2. Real Service (Middle) -->
+                    <g transform="translate(642, 147)" class="faux-dest-card faux-dest-proxy" data-route-target="proxy" role="button" tabindex="0" aria-label="Scenario 2: Real Service">
+                        <rect width="326" height="96" rx="10" class="faux-svg-dest-box faux-svg-dest-sky" />
+                        <circle cx="22" cy="28" r="5" class="faux-svg-dot-sky" />
+                        <text x="36" y="33" class="faux-svg-sans faux-svg-title" font-size="14.5" font-weight="600">Real Service</text>
+                        <rect data-flow-el="badge-box-proxy" x="200" y="16" width="108" height="22" rx="11" class="faux-dest-status-pill" data-badge-kind="proxy" />
+                        <text data-flow-el="badge-text-proxy" x="254" y="30.5" text-anchor="middle" class="faux-svg-mono faux-dest-status-text" font-size="9.5">upstream</text>
+
+                        <rect x="16" y="48" width="294" height="32" rx="6" class="faux-svg-well" />
+                        <text data-flow-el="code-proxy" x="28" y="68" class="faux-svg-mono faux-svg-code-sky" font-size="11.5">→ https://api.internal.prod:443</text>
+                    </g>
+
+                    <!-- 3. Fake Data Generation (Bottom) -->
+                    <g transform="translate(642, 270)" class="faux-dest-card faux-dest-fake" data-route-target="fake" role="button" tabindex="0" aria-label="Scenario 3: Fake Data Generation fallback">
+                        <rect width="326" height="96" rx="10" class="faux-svg-dest-box faux-svg-dest-emerald" />
+                        <circle cx="22" cy="28" r="5" class="faux-svg-dot-emerald" />
+                        <text x="36" y="33" class="faux-svg-sans faux-svg-title" font-size="14.5" font-weight="600">Fake Data Generation</text>
+                        <rect data-flow-el="badge-box-fake" x="200" y="16" width="108" height="22" rx="11" class="faux-dest-status-pill" data-badge-kind="fake" />
+                        <text data-flow-el="badge-text-fake" x="254" y="30.5" text-anchor="middle" class="faux-svg-mono faux-dest-status-text" font-size="9.5">schema + rules</text>
+
+                        <rect x="16" y="48" width="294" height="32" rx="6" class="faux-svg-well" />
+                        <text data-flow-el="code-fake" x="28" y="68" class="faux-svg-mono faux-svg-code-emerald" font-size="11.5"></text>
+                    </g>
+
+                    <!-- ================= TRAVELING PACKET ================= -->
+                    <g data-flow-el="packet" class="faux-live-packet" opacity="0">
+                        <circle r="9" class="faux-live-packet-halo" />
+                        <circle r="5" class="faux-live-packet-core" />
+                    </g>
+                </svg>
+
+                <!-- Mobile Vertical Diagram (< 768px) -->
+                <svg class="faux-flow-svg faux-flow-svg-mobile" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 660" role="img" aria-label="Animated FauxRPC request flow (vertical mobile view)">
+                    <defs>
+                        <pattern id="faux-flow-grid-mob" width="24" height="24" patternUnits="userSpaceOnUse">
+                            <circle cx="2" cy="2" r="1" class="faux-svg-grid-dot" />
+                        </pattern>
+                        <marker id="arrow-slate-m" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                            <path d="M 0 1 L 8 5 L 0 9 z" class="faux-svg-arrow-slate" />
+                        </marker>
+                        <marker id="arrow-violet-m" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                            <path d="M 0 1 L 8 5 L 0 9 z" class="faux-svg-arrow-violet" />
+                        </marker>
+                        <marker id="arrow-sky-m" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                            <path d="M 0 1 L 8 5 L 0 9 z" class="faux-svg-arrow-sky" />
+                        </marker>
+                        <marker id="arrow-emerald-m" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                            <path d="M 0 1 L 8 5 L 0 9 z" class="faux-svg-arrow-emerald" />
+                        </marker>
+                    </defs>
+
+                    <rect width="400" height="660" rx="14" class="faux-svg-canvas" />
+                    <rect width="400" height="660" rx="14" fill="url(#faux-flow-grid-mob)" />
+                    <rect x="0.5" y="0.5" width="399" height="659" rx="13.5" fill="none" class="faux-svg-canvas-border" />
+
+                    <!-- Client <-> FauxRPC Vertical Lines -->
+                    <path data-flow-el="path-req" d="M 140 124 L 140 178" fill="none" class="faux-svg-conn faux-conn-req" marker-end="url(#arrow-slate-m)" />
+                    <text x="130" y="155" text-anchor="end" class="faux-svg-mono faux-svg-edge-label" font-size="9.5">request</text>
+
+                    <path data-flow-el="path-res" d="M 260 184 L 260 130" fill="none" class="faux-svg-conn faux-conn-res" marker-end="url(#arrow-slate-m)" />
+                    <text x="270" y="155" text-anchor="start" class="faux-svg-mono faux-svg-edge-label" font-size="9.5">response</text>
+
+                    <!-- Non-Crossing Parallel PCB Circuit Bus Traces (Exiting flat bottom of FauxRPC at x=66, 50, 34) -->
+                    <g class="faux-branch faux-branch-stub">
+                        <path data-flow-el="path-to-stub" d="M 66 346 L 66 407 Q 66 415 74 415 L 80 415" fill="none" class="faux-svg-branch-base faux-svg-branch-violet" marker-end="url(#arrow-violet-m)" />
+                        <path data-flow-el="path-from-stub" d="M 86 415 L 74 415 Q 66 415 66 407 L 66 346" fill="none" stroke="none" />
+                        <circle cx="66" cy="346" r="3" class="faux-svg-dot-violet" />
+                    </g>
+
+                    <g class="faux-branch faux-branch-proxy">
+                        <path data-flow-el="path-to-proxy" d="M 50 346 L 50 505 Q 50 513 58 513 L 80 513" fill="none" class="faux-svg-branch-base faux-svg-branch-sky" marker-end="url(#arrow-sky-m)" />
+                        <path data-flow-el="path-from-proxy" d="M 86 513 L 58 513 Q 50 513 50 505 L 50 346" fill="none" stroke="none" />
+                        <circle cx="50" cy="346" r="3" class="faux-svg-dot-sky" />
+                    </g>
+
+                    <g class="faux-branch faux-branch-fake">
+                        <path data-flow-el="path-to-fake" d="M 34 346 L 34 603 Q 34 611 42 611 L 80 611" fill="none" class="faux-svg-branch-base faux-svg-branch-emerald" marker-end="url(#arrow-emerald-m)" />
+                        <path data-flow-el="path-from-fake" d="M 86 611 L 42 611 Q 34 611 34 603 L 34 346" fill="none" stroke="none" />
+                        <circle cx="34" cy="346" r="3" class="faux-svg-dot-emerald" />
+                    </g>
+
+                    <!-- TOP: CLIENT NODE -->
+                    <g transform="translate(20, 18)">
+                        <rect width="360" height="106" rx="10" class="faux-svg-node" />
+                        <text x="180" y="25" text-anchor="middle" class="faux-svg-sans faux-svg-title" font-size="14" font-weight="600">Client</text>
+
+                        <rect x="12" y="36" width="162" height="56" rx="6" class="faux-svg-well" />
+                        <text x="20" y="52" class="faux-svg-mono faux-svg-muted" font-size="8.5">OUTGOING CALL</text>
+                        <text data-flow-el="req-label" x="20" y="74" class="faux-svg-mono faux-svg-req-text" font-size="10">GetUser(id: "usr_vip")</text>
+
+                        <rect data-flow-el="res-box" x="186" y="36" width="162" height="56" rx="6" class="faux-svg-well faux-client-res-well" />
+                        <text x="194" y="52" class="faux-svg-mono faux-svg-muted" font-size="8.5">RESPONSE RECEIVED</text>
+                        <text data-flow-el="res-label" x="194" y="74" class="faux-svg-mono faux-svg-res-text" font-size="10">awaiting response...</text>
+                    </g>
+
+                    <!-- MIDDLE: FAUXRPC CORE -->
+                    <g transform="translate(20, 184)">
+                        <rect width="360" height="162" rx="14" class="faux-svg-core" />
+
+                        <text x="20" y="34" class="faux-svg-sans faux-svg-core-title" font-size="19" font-weight="700">FauxRPC</text>
+                        <g transform="translate(192, 17)">
+                            <rect x="0" y="0" width="72" height="22" rx="11" class="faux-svg-schema-proto" />
+                            <text x="36" y="14.5" text-anchor="middle" class="faux-svg-mono faux-svg-schema-proto-text" font-size="10" font-weight="600">Protobuf</text>
+
+                            <rect x="78" y="0" width="72" height="22" rx="11" class="faux-svg-schema-openapi" />
+                            <text x="114" y="14.5" text-anchor="middle" class="faux-svg-mono faux-svg-schema-openapi-text" font-size="10" font-weight="600">OpenAPI</text>
+                        </g>
+
+                        <line x1="20" y1="52" x2="340" y2="52" class="faux-svg-divider" />
+
+                        <g transform="translate(20, 66)">
+                            <rect data-flow-el="row-stub" x="0" y="0" width="320" height="24" rx="5" class="faux-core-step-row" data-step-kind="stub" />
+                            <circle cx="12" cy="12" r="4" class="faux-svg-dot-violet" />
+                            <text x="23" y="15.5" class="faux-svg-mono faux-core-step-name" font-size="10">1. Stubs</text>
+                            <text data-flow-el="status-stub" x="308" y="15.5" text-anchor="end" class="faux-svg-mono faux-core-step-status" font-size="9.5">—</text>
+
+                            <rect data-flow-el="row-proxy" x="0" y="30" width="320" height="24" rx="5" class="faux-core-step-row" data-step-kind="proxy" />
+                            <circle cx="12" cy="42" r="4" class="faux-svg-dot-sky" />
+                            <text x="23" y="45.5" class="faux-svg-mono faux-core-step-name" font-size="10">2. Proxy</text>
+                            <text data-flow-el="status-proxy" x="308" y="45.5" text-anchor="end" class="faux-svg-mono faux-core-step-status" font-size="9.5">—</text>
+
+                            <rect data-flow-el="row-fake" x="0" y="60" width="320" height="24" rx="5" class="faux-core-step-row" data-step-kind="fake" />
+                            <circle cx="12" cy="72" r="4" class="faux-svg-dot-emerald" />
+                            <text x="23" y="75.5" class="faux-svg-mono faux-core-step-name" font-size="10">3. Fake Data</text>
+                            <text data-flow-el="status-fake" x="308" y="75.5" text-anchor="end" class="faux-svg-mono faux-core-step-status" font-size="9.5">—</text>
+                        </g>
+                    </g>
+
+                    <!-- BOTTOM: 3 STACKED DESTINATION CARDS -->
+                    <g transform="translate(86, 372)" class="faux-dest-card faux-dest-stub" data-route-target="stub" role="button" tabindex="0">
+                        <rect width="294" height="86" rx="10" class="faux-svg-dest-box faux-svg-dest-violet" />
+                        <circle cx="18" cy="25" r="5" class="faux-svg-dot-violet" />
+                        <text x="32" y="30" class="faux-svg-sans faux-svg-title" font-size="13.5" font-weight="600">Conditional Stubs</text>
+                        <rect data-flow-el="badge-box-stub" x="182" y="14" width="98" height="22" rx="11" class="faux-dest-status-pill" data-badge-kind="stub" />
+                        <text data-flow-el="badge-text-stub" x="231" y="28.5" text-anchor="middle" class="faux-svg-mono faux-dest-status-text" font-size="9.5">CEL rule</text>
+                        <rect x="14" y="44" width="266" height="28" rx="6" class="faux-svg-well" />
+                        <text x="22" y="62" class="faux-svg-mono faux-svg-code-violet" font-size="10.5">when: req.id == "usr_vip" → 200 OK</text>
+                    </g>
+
+                    <g transform="translate(86, 470)" class="faux-dest-card faux-dest-proxy" data-route-target="proxy" role="button" tabindex="0">
+                        <rect width="294" height="86" rx="10" class="faux-svg-dest-box faux-svg-dest-sky" />
+                        <circle cx="18" cy="25" r="5" class="faux-svg-dot-sky" />
+                        <text x="32" y="30" class="faux-svg-sans faux-svg-title" font-size="13.5" font-weight="600">Real Service</text>
+                        <rect data-flow-el="badge-box-proxy" x="174" y="14" width="106" height="22" rx="11" class="faux-dest-status-pill" data-badge-kind="proxy" />
+                        <text data-flow-el="badge-text-proxy" x="227" y="28.5" text-anchor="middle" class="faux-svg-mono faux-dest-status-text" font-size="9.5">upstream</text>
+                        <rect x="14" y="44" width="266" height="28" rx="6" class="faux-svg-well" />
+                        <text data-flow-el="code-proxy" x="22" y="62" class="faux-svg-mono faux-svg-code-sky" font-size="10.5">→ https://api.internal.prod:443</text>
+                    </g>
+
+                    <g transform="translate(86, 568)" class="faux-dest-card faux-dest-fake" data-route-target="fake" role="button" tabindex="0">
+                        <rect width="294" height="86" rx="10" class="faux-svg-dest-box faux-svg-dest-emerald" />
+                        <circle cx="18" cy="25" r="5" class="faux-svg-dot-emerald" />
+                        <text x="32" y="30" class="faux-svg-sans faux-svg-title" font-size="13.5" font-weight="600">Fake Data Generation</text>
+                        <rect data-flow-el="badge-box-fake" x="174" y="14" width="106" height="22" rx="11" class="faux-dest-status-pill" data-badge-kind="fake" />
+                        <text data-flow-el="badge-text-fake" x="227" y="28.5" text-anchor="middle" class="faux-svg-mono faux-dest-status-text" font-size="9.5">schema + rules</text>
+                        <rect x="14" y="44" width="266" height="28" rx="6" class="faux-svg-well" />
+                        <text data-flow-el="code-fake" x="22" y="62" class="faux-svg-mono faux-svg-code-emerald" font-size="10.5"></text>
+                    </g>
+
+                    <g data-flow-el="packet" class="faux-live-packet" opacity="0">
+                        <circle r="8" class="faux-live-packet-halo" />
+                        <circle r="4.5" class="faux-live-packet-core" />
+                    </g>
+                </svg>
             </div>
         </div>
     </section>
@@ -219,6 +457,78 @@
 <span class="faux-tok-prompt">$</span> <span class="faux-tok-cmd">fauxrpc run</span> <span class="faux-tok-flag">--schema=</span><span class="faux-tok-str">openapi.yaml</span> <span class="faux-tok-flag">--dashboard</span></code></pre>
                     </div>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- INTERACTIVE WASM PLAYGROUND (BOTTOM SECTION) -->
+    <section id="playground-section" class="faux-section faux-section-bordered">
+        <div class="container">
+            <div class="text-center mx-auto mb-4" style="max-width: 680px;">
+                <h2 class="faux-section-title">Try fake data generation in your browser.</h2>
+                <p class="faux-section-desc mx-auto">
+                    Edit a Protobuf or OpenAPI schema below to synthesize realistic payloads matching your field types, Protovalidate constraints, and OpenAPI rules.
+                </p>
+            </div>
+
+            <div id="playground" class="faux-playground">
+                <div class="row g-4">
+                    <div class="col-lg-6">
+                        <div class="faux-editor-card">
+                            <div class="faux-editor-header">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="faux-pane-title">Schema</span>
+                                    <div class="faux-preset-group" role="group" aria-label="Schema examples">
+                                        <button type="button" class="faux-preset-btn active" aria-pressed="true" data-proto-preset="demo">Protobuf</button>
+                                        <button type="button" class="faux-preset-btn" aria-pressed="false" data-proto-preset="openapi">OpenAPI</button>
+                                        <button type="button" class="faux-preset-btn" aria-pressed="false" data-proto-preset="rest">REST</button>
+                                        <button type="button" class="faux-preset-btn" aria-pressed="false" data-proto-preset="greet">Validate</button>
+                                    </div>
+                                </div>
+                                <span id="compile-status" class="faux-status-pill faux-status-ok" role="status" aria-live="polite">Valid</span>
+                            </div>
+                            <div class="faux-editor-body">
+                                <div id="proto-editor" aria-label="Schema editor"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6">
+                        <div class="faux-editor-card">
+                            <div class="faux-editor-header">
+                                <div class="d-flex align-items-center gap-2 flex-grow-1 min-w-0">
+                                    <label for="message-select" id="target-select-label" class="faux-pane-title mb-0 d-none d-sm-inline">Output</label>
+                                    <select id="message-select" class="faux-select" aria-label="Target message or operation">
+                                        <option value="examples.demo.ContactProfile" selected>examples.demo.ContactProfile</option>
+                                        <option value="examples.demo.GetContactProfileRequest">examples.demo.GetContactProfileRequest</option>
+                                        <option value="examples.demo.GetItemRequest">examples.demo.GetItemRequest</option>
+                                        <option value="examples.demo.GetItemResponse">examples.demo.GetItemResponse</option>
+                                        <option value="examples.demo.Item">examples.demo.Item</option>
+                                        <option value="examples.demo.SearchItemsRequest">examples.demo.SearchItemsRequest</option>
+                                    </select>
+                                </div>
+                                <div class="d-flex align-items-center gap-2 flex-shrink-0">
+                                    <button type="button" id="copy-output-btn" class="faux-copy-btn" title="Copy generated JSON">
+                                        <span id="copy-output-label">Copy</span>
+                                    </button>
+                                    <button type="button" id="generate-btn" class="faux-generate-btn">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                            <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                                            <path d="M3 3v5h5"></path>
+                                            <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"></path>
+                                            <path d="M16 16h5v5"></path>
+                                        </svg>
+                                        <span>Generate</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="faux-editor-body">
+                                <div id="output-editor" aria-label="Generated JSON output"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="error-alert" class="faux-error-banner d-none mt-3" role="alert"></div>
             </div>
         </div>
     </section>
@@ -362,6 +672,273 @@
                 }
             });
         });
+
+        // Animated Request Routing Visualization (Decision & Return Choreography)
+        const flowWrap = document.getElementById('faux-flow-diagram');
+        if (flowWrap) {
+            const mobileQuery = window.matchMedia('(max-width: 767.98px)');
+            const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+            const scenarioOrder = ['stub', 'proxy', 'fake'];
+            let currentScenarioIdx = 0;
+            let rafId = null;
+            let stepTimers = [];
+            let nextScenarioTimer = null;
+            let isVisible = true;
+
+            const getActiveSvg = () =>
+                flowWrap.querySelector(mobileQuery.matches ? '.faux-flow-svg-mobile' : '.faux-flow-svg-desktop');
+
+            const setAllText = (elName, text) => {
+                flowWrap.querySelectorAll(`[data-flow-el="${elName}"]`).forEach((el) => {
+                    el.textContent = text;
+                });
+            };
+
+            const setAllAttr = (elName, attr, val) => {
+                flowWrap.querySelectorAll(`[data-flow-el="${elName}"]`).forEach((el) => {
+                    if (val) {
+                        el.setAttribute(attr, val);
+                    } else {
+                        el.removeAttribute(attr);
+                    }
+                });
+            };
+
+            const clearAllTimers = () => {
+                if (rafId) cancelAnimationFrame(rafId);
+                rafId = null;
+                stepTimers.forEach((t) => clearTimeout(t));
+                stepTimers = [];
+                clearTimeout(nextScenarioTimer);
+                setAllAttr('packet', 'opacity', '0');
+            };
+
+            const setRowState = (key, state, text) => {
+                setAllAttr(`row-${key}`, 'data-state', state || '');
+                setAllText(`status-${key}`, text);
+            };
+
+            const setCardBadge = (key, state, text) => {
+                setAllAttr(`badge-box-${key}`, 'data-state', state || '');
+                setAllText(`badge-text-${key}`, text);
+            };
+
+            const resetBoard = (reqCall, scenario) => {
+                flowWrap.setAttribute('data-scenario', scenario);
+                flowWrap.setAttribute('data-active-branch', 'none');
+                setAllText('req-label', reqCall);
+                setAllText('res-label', 'awaiting response...');
+                setAllAttr('res-box', 'data-state', 'pending');
+
+                setRowState('stub', '', '—');
+                setRowState('proxy', '', '—');
+                setRowState('fake', '', '—');
+
+                setCardBadge('stub', '', 'CEL rule');
+                setCardBadge('proxy', '', 'upstream');
+                setCardBadge('fake', '', 'schema + rules');
+
+                setAllText('code-proxy', '→ https://api.internal.prod:443');
+                setAllAttr('code-proxy', 'data-state', '');
+                setAllText('code-fake', '');
+            };
+
+            const animateAlongPath = (pathName, durationMs, colorTone, onDone) => {
+                const activeSvg = getActiveSvg();
+                const pathEl = activeSvg ? activeSvg.querySelector(`[data-flow-el="${pathName}"]`) : null;
+                const livePacket = activeSvg ? activeSvg.querySelector('[data-flow-el="packet"]') : null;
+                if (!pathEl || !livePacket || reducedMotionQuery.matches) {
+                    if (onDone) onDone();
+                    return;
+                }
+                const totalLen = pathEl.getTotalLength();
+                livePacket.setAttribute('data-tone', colorTone);
+                livePacket.setAttribute('opacity', '1');
+                const startTime = performance.now();
+
+                const tick = (now) => {
+                    const t = Math.min(1, (now - startTime) / durationMs);
+                    const eased = 1 - Math.pow(1 - t, 2.2);
+                    const pt = pathEl.getPointAtLength(eased * totalLen);
+                    livePacket.setAttribute('transform', `translate(${pt.x.toFixed(1)}, ${pt.y.toFixed(1)})`);
+                    if (t < 1) {
+                        rafId = requestAnimationFrame(tick);
+                    } else if (onDone) {
+                        onDone();
+                    }
+                };
+                rafId = requestAnimationFrame(tick);
+            };
+
+            const schedule = (fn, delayMs) => {
+                const id = setTimeout(fn, delayMs);
+                stepTimers.push(id);
+            };
+
+            const runScenario = (scenario, autoAdvance = true) => {
+                clearAllTimers();
+                currentScenarioIdx = scenarioOrder.indexOf(scenario);
+
+                if (scenario === 'stub') {
+                    resetBoard('GetUser(id: "usr_vip")', 'stub');
+                    if (reducedMotionQuery.matches) {
+                        flowWrap.setAttribute('data-active-branch', 'stub');
+                        setRowState('stub', 'ok', '✓ MATCH');
+                        setCardBadge('stub', 'ok', '✓ MATCH');
+                        setAllAttr('res-box', 'data-state', 'stub');
+                        setAllText('res-label', '200 OK (source: stub)');
+                        return;
+                    }
+                    animateAlongPath('path-req', 400, 'slate', () => {
+                        flowWrap.setAttribute('data-active-branch', 'stub');
+                        setRowState('stub', 'check', 'checking...');
+                        animateAlongPath('path-to-stub', 420, 'violet', () => {
+                            setRowState('stub', 'ok', '✓ MATCH');
+                            setCardBadge('stub', 'ok', '✓ MATCH');
+                            schedule(() => {
+                                animateAlongPath('path-from-stub', 400, 'violet', () => {
+                                    animateAlongPath('path-res', 400, 'violet', () => {
+                                        setAllAttr('packet', 'opacity', '0');
+                                        setAllAttr('res-box', 'data-state', 'stub');
+                                        setAllText('res-label', '200 OK (source: stub)');
+                                        if (autoAdvance && isVisible) {
+                                            nextScenarioTimer = setTimeout(() => runScenario('proxy', true), 1500);
+                                        }
+                                    });
+                                });
+                            }, 160);
+                        });
+                    });
+                } else if (scenario === 'proxy') {
+                    resetBoard('GetUser(id: "usr_42")', 'proxy');
+                    if (reducedMotionQuery.matches) {
+                        flowWrap.setAttribute('data-active-branch', 'proxy');
+                        setRowState('stub', 'miss', '✗ miss');
+                        setCardBadge('stub', 'miss', 'no match');
+                        setRowState('proxy', 'ok', '✓ 200 OK');
+                        setCardBadge('proxy', 'ok', '✓ 200 OK');
+                        setAllAttr('res-box', 'data-state', 'proxy');
+                        setAllText('res-label', '200 OK (source: proxy)');
+                        return;
+                    }
+                    animateAlongPath('path-req', 380, 'slate', () => {
+                        flowWrap.setAttribute('data-active-branch', 'stub');
+                        setRowState('stub', 'check', 'checking...');
+                        animateAlongPath('path-to-stub', 360, 'violet', () => {
+                            setRowState('stub', 'miss', '✗ miss');
+                            setCardBadge('stub', 'miss', 'no match');
+                            animateAlongPath('path-from-stub', 320, 'slate', () => {
+                                flowWrap.setAttribute('data-active-branch', 'proxy');
+                                setRowState('proxy', 'check', 'proxying...');
+                                animateAlongPath('path-to-proxy', 380, 'sky', () => {
+                                    setRowState('proxy', 'ok', '✓ 200 OK');
+                                    setCardBadge('proxy', 'ok', '✓ 200 OK');
+                                    schedule(() => {
+                                        animateAlongPath('path-from-proxy', 380, 'sky', () => {
+                                            animateAlongPath('path-res', 380, 'sky', () => {
+                                                setAllAttr('packet', 'opacity', '0');
+                                                setAllAttr('res-box', 'data-state', 'proxy');
+                                                setAllText('res-label', '200 OK (source: proxy)');
+                                                if (autoAdvance && isVisible) {
+                                                    nextScenarioTimer = setTimeout(() => runScenario('fake', true), 1500);
+                                                }
+                                            });
+                                        });
+                                    }, 160);
+                                });
+                            });
+                        });
+                    });
+                } else if (scenario === 'fake') {
+                    resetBoard('CreateOrder()', 'fake');
+                    if (reducedMotionQuery.matches) {
+                        flowWrap.setAttribute('data-active-branch', 'fake');
+                        setRowState('stub', 'miss', '✗ miss');
+                        setCardBadge('stub', 'miss', 'no match');
+                        setRowState('proxy', 'err', '✗ UNIMPL');
+                        setCardBadge('proxy', 'err', 'UNIMPLEMENTED');
+                        setRowState('fake', 'ok', '✓ 200 OK');
+                        setCardBadge('fake', 'ok', '✓ GENERATED');
+                        setAllText('code-fake', '{ "id": "ord_9f2a", "status": "CREATED" }');
+                        setAllAttr('res-box', 'data-state', 'fake');
+                        setAllText('res-label', '200 OK (source: fake)');
+                        return;
+                    }
+                    animateAlongPath('path-req', 360, 'slate', () => {
+                        flowWrap.setAttribute('data-active-branch', 'stub');
+                        setRowState('stub', 'check', 'checking...');
+                        animateAlongPath('path-to-stub', 330, 'violet', () => {
+                            setRowState('stub', 'miss', '✗ miss');
+                            setCardBadge('stub', 'miss', 'no match');
+                            animateAlongPath('path-from-stub', 300, 'slate', () => {
+                                flowWrap.setAttribute('data-active-branch', 'proxy');
+                                setRowState('proxy', 'check', 'proxying...');
+                                animateAlongPath('path-to-proxy', 350, 'sky', () => {
+                                    setRowState('proxy', 'err', '✗ UNIMPL');
+                                    setCardBadge('proxy', 'err', 'UNIMPLEMENTED');
+                                    setAllText('code-proxy', '✗ gRPC 12 UNIMPLEMENTED');
+                                    setAllAttr('code-proxy', 'data-state', 'err');
+                                    animateAlongPath('path-from-proxy', 340, 'amber', () => {
+                                        flowWrap.setAttribute('data-active-branch', 'fake');
+                                        setRowState('fake', 'check', 'faking...');
+                                        animateAlongPath('path-to-fake', 380, 'emerald', () => {
+                                            setRowState('fake', 'ok', '✓ 200 OK');
+                                            setCardBadge('fake', 'ok', '✓ GENERATED');
+                                            setAllText('code-fake', '{ "id": "ord_9f2a", "status": "CREATED" }');
+                                            schedule(() => {
+                                                animateAlongPath('path-from-fake', 380, 'emerald', () => {
+                                                    animateAlongPath('path-res', 380, 'emerald', () => {
+                                                        setAllAttr('packet', 'opacity', '0');
+                                                        setAllAttr('res-box', 'data-state', 'fake');
+                                                        setAllText('res-label', '200 OK (source: fake)');
+                                                        if (autoAdvance && isVisible) {
+                                                            nextScenarioTimer = setTimeout(() => runScenario('stub', true), 1600);
+                                                        }
+                                                    });
+                                                });
+                                            }, 160);
+                                        });
+                                    });
+                                });
+                            });
+                        });
+                    });
+                }
+            };
+
+            flowWrap.querySelectorAll('[data-route-target]').forEach((card) => {
+                const target = card.getAttribute('data-route-target');
+                card.addEventListener('click', () => runScenario(target, true));
+                card.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        runScenario(target, true);
+                    }
+                });
+            });
+
+            if (typeof mobileQuery.addEventListener === 'function') {
+                mobileQuery.addEventListener('change', () => {
+                    if (isVisible) runScenario(scenarioOrder[currentScenarioIdx], true);
+                });
+            }
+
+            if ('IntersectionObserver' in window) {
+                const flowObs = new IntersectionObserver((entries) => {
+                    entries.forEach((entry) => {
+                        isVisible = entry.isIntersecting;
+                        if (isVisible) {
+                            runScenario(scenarioOrder[currentScenarioIdx], true);
+                        } else {
+                            clearAllTimers();
+                        }
+                    });
+                }, { threshold: 0.15 });
+                flowObs.observe(flowWrap);
+            }
+
+            runScenario('stub', true);
+        }
 
         // WASM Playground logic
         const messageSelect = document.getElementById('message-select');

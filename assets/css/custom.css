@@ -477,6 +477,504 @@ html[data-dark-mode] .faux-btn-primary {
     flex-shrink: 0;
 }
 
+/* ==========================================================================
+   Animated Request Routing Visualization
+   ========================================================================== */
+.faux-flow-wrap {
+    max-width: 980px;
+    margin-bottom: 0;
+    width: 100%;
+}
+
+.faux-flow-svg {
+    width: 100%;
+    height: auto;
+    border-radius: 14px;
+    box-shadow: var(--faux-shadow);
+}
+
+.faux-flow-svg-desktop {
+    display: block;
+    aspect-ratio: 1000 / 390;
+}
+
+.faux-flow-svg-mobile {
+    display: none;
+    aspect-ratio: 400 / 660;
+    max-width: 440px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+@media (max-width: 767.98px) {
+    .faux-flow-svg-desktop {
+        display: none;
+    }
+    .faux-flow-svg-mobile {
+        display: block;
+    }
+}
+
+.faux-svg-sans {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+.faux-svg-mono {
+    font-family: "Fira Code", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
+.faux-svg-canvas {
+    fill: var(--faux-surface);
+}
+
+html[data-dark-mode] .faux-svg-canvas {
+    fill: #0b0f19;
+}
+
+.faux-svg-canvas-border {
+    stroke: var(--faux-border);
+    stroke-width: 1px;
+}
+
+.faux-svg-grid-dot {
+    fill: #cbd5e1;
+}
+
+html[data-dark-mode] .faux-svg-grid-dot {
+    fill: #1e293b;
+}
+
+.faux-svg-node {
+    fill: var(--faux-ground);
+    stroke: var(--faux-border);
+    stroke-width: 1.5px;
+}
+
+html[data-dark-mode] .faux-svg-node {
+    fill: #111827;
+    stroke: #334155;
+}
+
+.faux-svg-core-glow {
+    fill: #6366f1;
+    opacity: 0.08;
+}
+
+html[data-dark-mode] .faux-svg-core-glow {
+    opacity: 0.14;
+}
+
+.faux-svg-core {
+    fill: var(--faux-ground);
+    stroke: var(--faux-indigo);
+    stroke-width: 2px;
+}
+
+html[data-dark-mode] .faux-svg-core {
+    fill: #111827;
+    stroke: #6366f1;
+}
+
+.faux-svg-title,
+.faux-svg-core-title {
+    fill: var(--faux-text-primary);
+}
+
+.faux-svg-muted,
+.faux-svg-edge-label {
+    fill: var(--faux-text-muted);
+}
+
+.faux-svg-divider {
+    stroke: var(--faux-border);
+    stroke-width: 1.5px;
+}
+
+.faux-svg-well {
+    fill: var(--faux-code-well);
+    stroke: var(--faux-border);
+    stroke-width: 1px;
+}
+
+html[data-dark-mode] .faux-svg-well {
+    fill: #090d16;
+    stroke: #1e293b;
+}
+
+.faux-svg-req-text {
+    fill: var(--faux-text-primary);
+    font-weight: 500;
+}
+
+.faux-svg-res-text {
+    fill: var(--faux-text-muted);
+    font-weight: 500;
+}
+
+.faux-client-res-well[data-state="stub"] {
+    stroke: var(--faux-violet);
+    stroke-width: 1.5px;
+}
+.faux-client-res-well[data-state="stub"] ~ .faux-svg-res-text {
+    fill: var(--faux-violet);
+    font-weight: 600;
+}
+
+.faux-client-res-well[data-state="proxy"] {
+    stroke: var(--faux-sky);
+    stroke-width: 1.5px;
+}
+.faux-client-res-well[data-state="proxy"] ~ .faux-svg-res-text {
+    fill: var(--faux-sky);
+    font-weight: 600;
+}
+
+.faux-client-res-well[data-state="fake"] {
+    stroke: var(--faux-emerald);
+    stroke-width: 1.5px;
+}
+.faux-client-res-well[data-state="fake"] ~ .faux-svg-res-text {
+    fill: var(--faux-emerald);
+    font-weight: 600;
+}
+
+/* Schema Pills on FauxRPC Core */
+.faux-svg-schema-proto {
+    fill: var(--faux-indigo-bg);
+    stroke: var(--faux-indigo-border);
+    stroke-width: 1px;
+}
+
+.faux-svg-schema-proto-text {
+    fill: var(--faux-indigo);
+}
+
+html[data-dark-mode] .faux-svg-schema-proto {
+    fill: #312e81;
+    stroke: #6366f1;
+}
+
+html[data-dark-mode] .faux-svg-schema-proto-text {
+    fill: #e0e7ff;
+}
+
+.faux-svg-schema-openapi {
+    fill: var(--faux-emerald-bg);
+    stroke: var(--faux-emerald-border);
+    stroke-width: 1px;
+}
+
+.faux-svg-schema-openapi-text {
+    fill: var(--faux-emerald);
+}
+
+html[data-dark-mode] .faux-svg-schema-openapi {
+    fill: #064e3b;
+    stroke: #10b981;
+}
+
+html[data-dark-mode] .faux-svg-schema-openapi-text {
+    fill: #d1fae5;
+}
+
+/* 3-Step Live Decision Checklist inside FauxRPC Core */
+.faux-core-step-row {
+    fill: var(--faux-code-well);
+    stroke: var(--faux-border);
+    stroke-width: 1px;
+    transition: stroke 0.15s ease, fill 0.15s ease;
+}
+
+html[data-dark-mode] .faux-core-step-row {
+    fill: #090d16;
+    stroke: #1e293b;
+}
+
+.faux-core-step-row[data-state="check"] {
+    stroke: var(--faux-sky);
+}
+.faux-core-step-row[data-state="ok"] {
+    stroke: var(--faux-emerald);
+}
+.faux-core-step-row[data-state="miss"] {
+    opacity: 0.7;
+}
+.faux-core-step-row[data-state="err"] {
+    stroke: var(--faux-amber);
+}
+
+.faux-core-step-name {
+    fill: var(--faux-text-primary);
+    font-weight: 500;
+}
+
+.faux-core-step-status {
+    fill: var(--faux-text-muted);
+    font-weight: 600;
+}
+
+.faux-core-step-row[data-state="check"] ~ .faux-core-step-status {
+    fill: var(--faux-sky);
+}
+.faux-core-step-row[data-step-kind="stub"][data-state="ok"] ~ [data-flow-el="status-stub"] {
+    fill: var(--faux-violet);
+}
+.faux-core-step-row[data-step-kind="proxy"][data-state="ok"] ~ [data-flow-el="status-proxy"] {
+    fill: var(--faux-sky);
+}
+.faux-core-step-row[data-step-kind="proxy"][data-state="err"] ~ [data-flow-el="status-proxy"] {
+    fill: var(--faux-amber);
+}
+.faux-core-step-row[data-step-kind="fake"][data-state="ok"] ~ [data-flow-el="status-fake"] {
+    fill: var(--faux-emerald);
+}
+
+/* Arrows & Connecting Lines */
+.faux-svg-arrow-slate {
+    fill: #64748b;
+}
+.faux-svg-arrow-violet {
+    fill: var(--faux-violet);
+}
+.faux-svg-arrow-sky {
+    fill: var(--faux-sky);
+}
+.faux-svg-arrow-emerald {
+    fill: var(--faux-emerald);
+}
+
+.faux-svg-conn {
+    stroke: #64748b;
+    stroke-width: 2px;
+}
+
+.faux-conn-res {
+    stroke-dasharray: 5 4;
+}
+
+.faux-svg-branch-base {
+    stroke-width: 2px;
+    opacity: 0.35;
+    transition: opacity 0.2s ease, stroke-width 0.2s ease;
+}
+
+.faux-svg-branch-violet {
+    stroke: var(--faux-violet);
+}
+
+.faux-svg-branch-sky {
+    stroke: var(--faux-sky);
+}
+
+.faux-svg-branch-emerald {
+    stroke: var(--faux-emerald);
+}
+
+.faux-flow-wrap[data-active-branch="stub"] .faux-branch-stub .faux-svg-branch-base,
+.faux-flow-wrap[data-active-branch="proxy"] .faux-branch-proxy .faux-svg-branch-base,
+.faux-flow-wrap[data-active-branch="fake"] .faux-branch-fake .faux-svg-branch-base {
+    opacity: 1;
+    stroke-width: 2.5px;
+}
+
+/* Branch Pills */
+.faux-svg-pill {
+    fill: var(--faux-surface);
+    stroke-width: 1px;
+}
+
+html[data-dark-mode] .faux-svg-pill {
+    fill: #0b0f19;
+}
+
+.faux-svg-pill-violet {
+    stroke: var(--faux-violet-border);
+}
+.faux-svg-pill-sky {
+    stroke: var(--faux-sky-border);
+}
+.faux-svg-pill-emerald {
+    stroke: var(--faux-emerald-border);
+}
+
+.faux-svg-pill-text-violet {
+    fill: var(--faux-violet);
+    font-weight: 600;
+}
+.faux-svg-pill-text-sky {
+    fill: var(--faux-sky);
+    font-weight: 600;
+}
+.faux-svg-pill-text-emerald {
+    fill: var(--faux-emerald);
+    font-weight: 600;
+}
+
+.faux-svg-dot-violet {
+    fill: var(--faux-violet);
+}
+.faux-svg-dot-sky {
+    fill: var(--faux-sky);
+}
+.faux-svg-dot-emerald {
+    fill: var(--faux-emerald);
+}
+
+/* Destination Cards */
+.faux-dest-card {
+    cursor: pointer;
+    opacity: 0.56;
+    transition: opacity 0.22s ease;
+    outline: none;
+}
+
+.faux-dest-card:hover,
+.faux-dest-card:focus-visible {
+    opacity: 0.92;
+}
+
+.faux-flow-wrap[data-active-branch="stub"] .faux-dest-stub,
+.faux-flow-wrap[data-active-branch="proxy"] .faux-dest-proxy,
+.faux-flow-wrap[data-active-branch="fake"] .faux-dest-fake {
+    opacity: 1;
+}
+
+.faux-svg-dest-box {
+    fill: var(--faux-ground);
+    stroke-width: 1.5px;
+    transition: stroke-width 0.2s ease;
+}
+
+html[data-dark-mode] .faux-svg-dest-box {
+    fill: #111827;
+}
+
+.faux-svg-dest-violet {
+    stroke: var(--faux-violet-border);
+}
+.faux-svg-dest-sky {
+    stroke: var(--faux-sky-border);
+}
+.faux-svg-dest-emerald {
+    stroke: var(--faux-emerald-border);
+}
+
+.faux-flow-wrap[data-active-branch="stub"] .faux-svg-dest-violet {
+    stroke: var(--faux-violet);
+    stroke-width: 2px;
+}
+.faux-flow-wrap[data-active-branch="proxy"] .faux-svg-dest-sky {
+    stroke: var(--faux-sky);
+    stroke-width: 2px;
+}
+.faux-flow-wrap[data-active-branch="fake"] .faux-svg-dest-emerald {
+    stroke: var(--faux-emerald);
+    stroke-width: 2px;
+}
+
+/* Destination Card Status Pill */
+.faux-dest-status-pill {
+    fill: var(--faux-elevated);
+    stroke: var(--faux-border);
+    stroke-width: 1px;
+}
+
+.faux-dest-status-text {
+    fill: var(--faux-text-secondary);
+    font-weight: 600;
+}
+
+.faux-dest-status-pill[data-badge-kind="stub"][data-state="ok"] {
+    fill: var(--faux-violet-bg);
+    stroke: var(--faux-violet-border);
+}
+.faux-dest-status-pill[data-badge-kind="stub"][data-state="ok"] + .faux-dest-status-text {
+    fill: var(--faux-violet);
+}
+.faux-dest-status-pill[data-badge-kind="stub"][data-state="miss"] + .faux-dest-status-text {
+    fill: var(--faux-text-muted);
+}
+
+.faux-dest-status-pill[data-badge-kind="proxy"][data-state="ok"] {
+    fill: var(--faux-sky-bg);
+    stroke: var(--faux-sky-border);
+}
+.faux-dest-status-pill[data-badge-kind="proxy"][data-state="ok"] + .faux-dest-status-text {
+    fill: var(--faux-sky);
+}
+.faux-dest-status-pill[data-badge-kind="proxy"][data-state="err"] {
+    fill: var(--faux-amber-bg);
+    stroke: var(--faux-amber-border);
+}
+.faux-dest-status-pill[data-badge-kind="proxy"][data-state="err"] + .faux-dest-status-text {
+    fill: var(--faux-amber);
+}
+
+.faux-dest-status-pill[data-badge-kind="fake"][data-state="ok"] {
+    fill: var(--faux-emerald-bg);
+    stroke: var(--faux-emerald-border);
+}
+.faux-dest-status-pill[data-badge-kind="fake"][data-state="ok"] + .faux-dest-status-text {
+    fill: var(--faux-emerald);
+}
+
+.faux-svg-code-violet {
+    fill: var(--faux-violet);
+}
+.faux-svg-code-sky {
+    fill: var(--faux-sky);
+}
+[data-flow-el="code-proxy"][data-state="err"] {
+    fill: var(--faux-amber);
+}
+.faux-svg-code-emerald {
+    fill: var(--faux-emerald);
+}
+
+/* Traveling Live Request/Response Packet */
+.faux-live-packet {
+    pointer-events: none;
+    transition: opacity 0.12s ease;
+}
+
+.faux-live-packet-core {
+    fill: var(--faux-text-primary);
+}
+.faux-live-packet-halo {
+    fill: var(--faux-text-primary);
+    opacity: 0.25;
+}
+
+.faux-live-packet[data-tone="violet"] .faux-live-packet-core,
+.faux-live-packet[data-tone="violet"] .faux-live-packet-halo {
+    fill: var(--faux-violet);
+}
+
+.faux-live-packet[data-tone="sky"] .faux-live-packet-core,
+.faux-live-packet[data-tone="sky"] .faux-live-packet-halo {
+    fill: var(--faux-sky);
+}
+
+.faux-live-packet[data-tone="emerald"] .faux-live-packet-core,
+.faux-live-packet[data-tone="emerald"] .faux-live-packet-halo {
+    fill: var(--faux-emerald);
+}
+
+.faux-live-packet[data-tone="amber"] .faux-live-packet-core,
+.faux-live-packet[data-tone="amber"] .faux-live-packet-halo {
+    fill: var(--faux-amber);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .faux-live-packet {
+        display: none !important;
+    }
+    .faux-dest-card,
+    .faux-svg-branch-base {
+        transition: none !important;
+    }
+}
+
 /* Two-Pane WASM Editor Cards */
 .faux-editor-card {
     background-color: var(--faux-surface);
